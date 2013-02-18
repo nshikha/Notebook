@@ -122,39 +122,123 @@ app.post("/answer", function(request, response) {
   response.send({ success: true });
 });
 
+
+// -------------------------------------------------------------------
+//Set of global variables
+var g_notebookList = [];
+
+function Notebook(){
+	this.alltags = [];
+	this.entries = [];
+}
+
+function Entry(){
+	this.name = "";
+	this.content = "";
+	this.desc = "";
+	this.tags = [];
+	this.dateAccessed = "";
+}
+
+function initServer() {
+  // When we start the server, we must load the stored data
+  var defaultList = "[]";
+  readFile("database/notebooks.txt", defaultList, function(err, data) {
+	g_notebookList = JSON.parse(data);
+  });
+}
+
+function initNotebook(name) {
+	//Create notebook object
+	var notes = new Notebook();
+	
+	//Create file for notebook object
+	writeFile("database/" + name + ".txt", JSON.stringify(notes));
+	
+	//Add to appropriate places 
+	addToNotebookList(name);
+	
+	return notes;
+}
+
+// Updates the database and the global notebooks object with the information.
+function addToNotebookList(name){
+	g_notebookList.push(name);
+	g_notebookList.sort();
+	writeFile("database/notebooks.txt", 
+		JSON.stringify(g_notebookList));
+}
+
+// Checks if the submitted notebook name is valid
+// TODO: check if notebook name is well-formed
+function validNotebookName(name){
+	console.log(typeof(name));
+	if(typeof(name) != 'string'){
+		return false;
+	}
+
+	// Checks if the notebook already exists.
+	var inList = g_notebookList.indexOf(name);
+	if(inList >= 0){
+		console.log("Notebook " + name + " already exists!");
+		return false;
+	}
+
+	return true;
+}
+
 // This is for serving files in the static directory
 app.get("/static/:staticFilename", function (request, response) {
     response.sendfile("static/" + request.params.staticFilename);
 });
 
-function initServer() {
-  // When we start the server, we must load the stored data
-  var defaultList = "{}";
-  readFile("data.txt", defaultList, function(err, data) {
-    datastore = JSON.parse(data);
-  });
-}
-
-// -------------------------------------------------------------------
-//Set of global variables
-var g_idList = [];
-
-// Serves back a valid clientid.
-app.get("/clientid", function (request, response) {
-	var nextId = g_idList.length;
-	g_idList.push(nextId);
-
-	response.send({
-		"newid": nextId,
-		"success": true
-	});
+// Creates a new notebook
+app.post('/create', function (request, response) {
+	var name = 	request.body.name;
+	
+	// Checks if the notebook name already exists and if its well-formed
+	if(!validNotebookName(name)){
+		response.send({"success": false});
+	}
+	else{
+		var note = initNotebook(name);
+		response.send({"notebook": note,
+					   "success": true
+					  });
+	}
 });
 
-// create new answer
-app.post("/postcode", function(request, response) {
-  response.send({ answer: eval(request.body.code), success: true });
+// Loads an existing notebook
+app.get('/notebooks', function (request, response) {
+	response.send({"list": g_notebookList,
+				   "success": true
+	});	
+});
+
+// Loads an existing notebook
+app.get('/load/:name', function (request, response) {
+	var name = 	request.params.name;
+	var notebook;
+	var inList = g_notebookList.indexOf(name);
+	if(inList >= 0){
+		readFile(name + ".txt", {}, function(err, data) {
+			notebook = JSON.parse(data);
+		});		
+	}
+	response.send(notebook);	
 });
 
 // Finally, initialize the server, then activate the server at port 8889
 initServer();
 app.listen(8889);
+
+/* Important code design questions:
+	Should we only persist the data back to the server once the file write is complete, or should we add it first to the server, and then write it to file?
+*/
+
+/* TODO:
+	-Discuss the format of a notebook name?
+		-All lowercase?
+		-No numbers?
+		-Must be something that can be written to a filename
+*/

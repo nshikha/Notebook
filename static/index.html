@@ -1,33 +1,41 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" href="reset.css">
+    <link href="reset.css" rel="stylesheet" type="text/css">
     <link href="style.css" rel="stylesheet" type="text/css">
   </head>
   <body>
+
+
     <div class="wrapper">
-      <h1>Wolfram<span>Beta</span></h1>
-
-	  <input id="code-input" name="Code" type="textarea" placeholder="1+1"/> 
-	  
-      <form id="compute-form">
-        <label for="question">Ask a <strong>question</strong></label>
-        <input id="question" name="question" type="text" placeholder="How many tomatoes grow in the forest?" class="wolfbox" />
-      </form>
-
-      <div id="answer" class="wolfbox">
-        <h3>Input:</h3>
-        <p id="answerInput"></p>
-
-        <h3>Result:</h3>
-        <p id="answerOutput"></p>
-
-        <h3>Timestamp:</h3>
-        <p id="answerTimestamp"></p>
-
+      <div id="header">
+          <h1>Welcome to <span class="ebay"><span class="r">ee</span><span class="b">b</span><span class="y">a</span><span class="g">e</span></span></h1>
       </div>
-   </div>
+
+      <div id="eebae-listing">
+        <p>Create a New Listing</p>
+        <form name="myform" action="javascript:addListing()">
+          <div class="row">
+            <label>Author:</label>  <input id="author-input" name="Author" type="text" placeholder="Harold"/> 
+          </div>
+          <div class="row">
+            <label>Description:</label>  <input id="desc-input" name="Desc" type="text" placeholder="A blue car..."/>
+          </div>
+          <div class="row">
+            <label>Price:</label>  <input id="price-input" name="Price" type="text" placeholder="3133.70"/>
+          </div>
+          <div class="row right">
+            <input id="submitButton" name="Submit"  type="submit" value="Add Listing"/>
+          </div>
+        </form>
+      </div>
+
+      <ul class="listings"></ul>
+
+    </div>
+
+
 	<script src="jquery-1.9.0.js"></script>
-  <script src="client.js"></script>
+	<script src="notebook.js"></script>
 	</body>
 </html>
