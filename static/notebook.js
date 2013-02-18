@@ -167,6 +167,17 @@ var g_notebook;
       }
     });
   } 
+
+  // Adds a notebook to the database
+  function getNotebook(name) {
+    $.ajax({
+      type: "get",
+      url: "/notebook/" + name,
+      success: function(data) {
+        g_notebook = data.notebook;
+      }
+    });
+  } 
   
   // Logs the list of notebooks from the database.
   // This is supposed to be a secret function.
