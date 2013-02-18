@@ -127,13 +127,13 @@ app.post("/answer", function(request, response) {
 //Set of global variables
 var g_notebookList = [];
 
-function Notebook(){
+function Notebook(name){
+	this.name = name;
 	this.alltags = [];
 	this.entries = [];
 }
 
 function Entry(){
-	this.name = "";
 	this.content = "";
 	this.desc = "";
 	this.tags = [];
@@ -143,29 +143,29 @@ function Entry(){
 function initServer() {
   // When we start the server, we must load the stored data
   var defaultList = "[]";
-  readFile("database/notebooks.txt", defaultList, function(err, data) {
+  readFile(getDBFilename("notebooks"), defaultList, function(err, data) {
 	g_notebookList = JSON.parse(data);
   });
 }
 
 function initNotebook(name) {
 	//Create notebook object
-	var notes = new Notebook();
+	var notebook = new Notebook(name);	
 	
 	//Create file for notebook object
-	writeFile("database/" + name + ".txt", JSON.stringify(notes));
+	writeFile(getDBFilename(name), JSON.stringify(notebook));
 	
 	//Add to appropriate places 
 	addToNotebookList(name);
 	
-	return notes;
+	return notebook;
 }
 
 // Updates the database and the global notebooks object with the information.
 function addToNotebookList(name){
 	g_notebookList.push(name);
 	g_notebookList.sort();
-	writeFile("database/notebooks.txt", 
+	writeFile(getDBFilename("notebooks"), 
 		JSON.stringify(g_notebookList));
 }
 
@@ -177,6 +177,10 @@ function validNotebookName(name){
 		return false;
 	}
 
+	if(name === "notebooks"){
+		return false;
+	}
+	
 	// Checks if the notebook already exists.
 	var inList = g_notebookList.indexOf(name);
 	if(inList >= 0){
@@ -185,6 +189,11 @@ function validNotebookName(name){
 	}
 
 	return true;
+}
+
+// Given the name of a file, returns filepath string.
+function getDBFilename(name){
+	return "database/" + name + ".txt";
 }
 
 // This is for serving files in the static directory
@@ -201,12 +210,13 @@ app.post('/create', function (request, response) {
 		response.send({"success": false});
 	}
 	else{
-		var note = initNotebook(name);
-		response.send({"notebook": note,
+		var notebook = initNotebook(name);
+		response.send({"notebook": notebook,
 					   "success": true
 					  });
 	}
 });
+
 
 // Loads an existing notebook
 app.get('/notebooks', function (request, response) {
@@ -220,25 +230,19 @@ app.get('/load/:name', function (request, response) {
 	var name = 	request.params.name;
 	var notebook;
 	var inList = g_notebookList.indexOf(name);
+	console.log(inList);
+
 	if(inList >= 0){
-		readFile(name + ".txt", {}, function(err, data) {
+		readFile(getDBFilename(name), {}, function(err, data) {
 			notebook = JSON.parse(data);
+			console.log(notebook);
+			response.send({"notebook": notebook,
+							"success": true});	
 		});		
-	}
-	response.send(notebook);	
+	}	
 });
 
 // Finally, initialize the server, then activate the server at port 8889
 initServer();
 app.listen(8889);
 
-/* Important code design questions:
-	Should we only persist the data back to the server once the file write is complete, or should we add it first to the server, and then write it to file?
-*/
-
-/* TODO:
-	-Discuss the format of a notebook name?
-		-All lowercase?
-		-No numbers?
-		-Must be something that can be written to a filename
-*/
