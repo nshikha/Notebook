@@ -226,7 +226,7 @@ app.get('/notebooks', function (request, response) {
 });
 
 // Loads an existing notebook
-app.get('/load/:name', function (request, response) {
+app.get('/notebook/:name', function (request, response) {
 	var name = 	request.params.name;
 	var notebook;
 	var inList = g_notebookList.indexOf(name);

@@ -176,7 +176,6 @@ var g_notebook;
       success: function(data) {
         g_notebook = data.notebook;
 		//console.log(g_notebook);
-      }
     });
   } 
   
