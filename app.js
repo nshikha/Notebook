@@ -172,8 +172,7 @@ function addToNotebookList(name){
 // Checks if the submitted notebook name is valid
 // TODO: check if notebook name is well-formed
 function validNotebookName(name){
-	console.log(typeof(name));
-	if(typeof(name) != 'string'){
+	if(typeof(name) !== "string"){
 		return false;
 	}
 
@@ -181,15 +180,26 @@ function validNotebookName(name){
 		return false;
 	}
 	
+	return true;
+}
+
+// Checks if the submitted notebook name is valid
+// TODO: check if notebook name is well-formed
+function existingNotebookName(name){
+	if(typeof(name) != 'string'){
+		return false;
+	}
+	
 	// Checks if the notebook already exists.
 	var inList = g_notebookList.indexOf(name);
 	if(inList >= 0){
 		console.log("Notebook " + name + " already exists!");
-		return false;
+		return true;
 	}
 
-	return true;
+	return false;
 }
+
 
 // Given the name of a file, returns filepath string.
 function getDBFilename(name){
@@ -206,7 +216,7 @@ app.post('/create', function (request, response) {
 	var name = 	request.body.name;
 	
 	// Checks if the notebook name already exists and if its well-formed
-	if(!validNotebookName(name)){
+	if(!validNotebookName(name) || existingNotebookName(name)){
 		response.send({"success": false});
 	}
 	else{
@@ -226,20 +236,21 @@ app.get('/notebooks', function (request, response) {
 });
 
 // Loads an existing notebook
-app.get('/notebook/:name', function (request, response) {
-	var name = 	request.params.name;
+app.get('/load/:name', function (request, response) {
+	var name = request.params.name;
 	var notebook;
-	var inList = g_notebookList.indexOf(name);
-	console.log(inList);
-
-	if(inList >= 0){
+	
+	if(existingNotebookName(name)){
 		readFile(getDBFilename(name), {}, function(err, data) {
 			notebook = JSON.parse(data);
 			console.log(notebook);
 			response.send({"notebook": notebook,
 							"success": true});	
 		});		
-	}	
+	}
+	else{
+		response.send({"success": false});		
+	}
 });
 
 // Finally, initialize the server, then activate the server at port 8889

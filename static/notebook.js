@@ -176,6 +176,7 @@ var g_notebook;
       success: function(data) {
         g_notebook = data.notebook;
 		//console.log(g_notebook);
+	  }
     });
   } 
   
@@ -192,4 +193,6 @@ var g_notebook;
   }   
   
   $(document).ready(function() {
+	console.log("Some functions: ");
+	console.log("getNotebooks(), addNotebook(name), getNotebook(name)");
   });
