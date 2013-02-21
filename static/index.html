@@ -7,31 +7,73 @@
   <body>
 
 
-    <div class="wrapper">
-      <div id="header">
-          <h1>Welcome to <span class="ebay"><span class="r">ee</span><span class="b">b</span><span class="y">a</span><span class="g">e</span></span></h1>
+    <div class="splash-page">
+      <div class="header">
+        <h1>Notebooks.mi</h1>
       </div>
 
-      <div id="eebae-listing">
-        <p>Create a New Listing</p>
-        <form name="myform" action="javascript:addListing()">
+      <div id="find-notebook">
+        <form name="findNotebook" action="javascript:toNotebook()">
           <div class="row">
-            <label>Author:</label>  <input id="author-input" name="Author" type="text" placeholder="Harold"/> 
-          </div>
-          <div class="row">
-            <label>Description:</label>  <input id="desc-input" name="Desc" type="text" placeholder="A blue car..."/>
-          </div>
-          <div class="row">
-            <label>Price:</label>  <input id="price-input" name="Price" type="text" placeholder="3133.70"/>
-          </div>
-          <div class="row right">
-            <input id="submitButton" name="Submit"  type="submit" value="Add Listing"/>
+            <label>Notebook Name:</label>  <input id="notebook-name-input" name="notebookName" type="text" placeholder="Anything"/>
           </div>
         </form>
       </div>
+    </div>
 
-      <ul class="listings"></ul>
+    <div id="notebook-page">
+      <div class="header">
+        <h1>Notebook Name:</h1>
+        <span class="searchbox">
+          <input id="search-input" name="searchName" type="text" placeholder="Search by hashtag"/>
+          <button id="search-button">Search!</button>
+        </span>
+      </div>
 
+      <div id="notebook-entries">
+        <div class="entry">
+          <span> Date added </span>
+          <p class="entry-body">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </p>
+          <a href="#" class="entry-edit">Edit</a>
+          <a href="#" class="entry-delete">Delete</a>
+        </div>
+        <div class="entry">
+          <span> Date added </span>
+          <p class="entry-body">
+            This is cool <a href="#">http://asldkjfal</a>.
+          </p>
+          <a href="#" class="entry-edit">Edit</a>
+          <a href="#" class="entry-delete">Delete</a>
+        </div>
+      </div>
+    </div>
+
+    <div id="notebook-page-no-entries">
+      <div class="header">
+        <h1>Notebook Name:</h1>
+        <span class="searchbox">
+          <input id="search-input" name="searchName" type="text" placeholder="Search by hashtag"/>
+          <button id="search-button">Search!</button>
+        </span>
+      </div>
+
+      <div id="notebook-about">
+        <span class="notebook-created-date">Date created</span>: something
+        <span class="notebook-num-entries">Num entries</span>: something
+      </div>
+
+      <div id="notebook-tags">
+        <ul>
+          <li>#something<li>
+          <li>#thing<li>
+          <li>#that<li>
+          <li>#is<li>
+          <li>#a<li>
+          <li>#tag<li>
+        </ul>
+      </div>
     </div>
 
 
