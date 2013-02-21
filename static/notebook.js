@@ -15,21 +15,21 @@
 
   // Global datastore
   var listings;
-  
+
   // Implement addListing()
  function addListing(){
 	var author = $("#author-input").val();
 	var desc = $("#desc-input").val();
 	var price = parseFloat($("#price-input").val());
-	
+
 	if(!!author && !!desc && !!price){
 	 	/*console.log(author);
 		console.log(desc);
 		console.log(price); */
-		
+
 		// Send an add request
 		add(desc, author, price);
-		
+
 		// Reset the input fields.
 		$("#author-input").val("");
 		$("#desc-input").val("");
@@ -39,8 +39,8 @@
 		console.log("Missing input field.");
 	}
  }
- 
- 
+
+
   // Implement refreshDOM()
   function refreshDOM(){
 	// Identify the DOM element where we pt things
@@ -51,7 +51,7 @@
 		var f = function(){
 			var elem = listings[i];
 			var newItem = $("<li>");
-			
+
 			// Put all of the content into the listings element.
 			var authorDiv = $("<div class = 'row'></div>");
 			authorDiv.append($("<h3>" + elem.author + "</h3>"));
@@ -63,22 +63,22 @@
 			priceDiv.append($("<h3>" + "$" + elem.price + "</h3>"));
 
 			// Create the buttons
-			var buttonDiv = $("<div>");		
+			var buttonDiv = $("<div>");
 			var delButton = $("<a> Delete </a>");
-			delButton.click(function(event){ 
+			delButton.click(function(event){
 								var j = listings.indexOf(elem);
 								newItem.remove();
 								del(j);
 							});
 			buttonDiv.append(delButton);
-			
+
 			// Add a click event only if it is not sold.
 			var soldButton = ($("<a> Sold! </a>"));
 			if(elem.sold){
 				newItem.addClass('sold');
 			}
 			else{
-				soldButton.click(function(event){ 
+				soldButton.click(function(event){
 								var j = listings.indexOf(elem);
 								edit(j, elem.desc, elem.author, elem.price, true)
 								listings[j].sold = true;
@@ -86,18 +86,18 @@
 							});
 			}
 			buttonDiv.append(soldButton);
-			
+
 			// Attach all the proper elements together.
 			newItem.append(authorDiv);
 			newItem.append(dateDiv);
 			newItem.append(descDiv);
 			newItem.append(priceDiv);
-			newItem.append(buttonDiv);		
+			newItem.append(buttonDiv);
 			contentblock.append(newItem);
 		}();
 	}
   }
-  
+
   // Implement the get() function
   function get() {
     $.ajax({
@@ -138,7 +138,7 @@
     $.ajax({
       type: "delete",
       url: "/listings/" + id,
-      success: function(data) { 
+      success: function(data) {
         //console.log(data);
 		listings.splice(id,1);
       }
@@ -166,7 +166,7 @@ var g_notebook;
         g_notebook = data.notebook;
       }
     });
-  } 
+  }
 
   
   // Gets a notebook from the database
@@ -179,22 +179,8 @@ var g_notebook;
 		//console.log(g_notebook);
 	  }
     });
-  } 
-  
-   // Adds a notebook to the database
-  function addEntry(name, entry) {
-    $.ajax({
-      type: "post",
-      data: {"name": name,
-			 "entry": entry},
-      url: "/addEntry",
-      success: function(data) {
-        g_notebook = data.notebook;
-      }
-    });
-  } 
+  }
 
- 
   // Logs the list of notebooks from the database.
   // This is supposed to be a secret function.
   function getNotebooks() {
@@ -205,9 +191,15 @@ var g_notebook;
         console.log(data.list);
       }
     });
-  }   
-  
+  }
+
   $(document).ready(function() {
-	console.log("Some functions: ");
-	console.log("getNotebooks(), addNotebook(name), getNotebook(name)");
+	    console.log("Some functions: ");
+	    console.log("getNotebooks(), addNotebook(name), getNotebook(name)");
+      var urlSegments = window.location.pathname.split('/');
+      urlSegments.splice(0,1); // removes "" from the beginning of list
+      if(urlSegments[0] === "notebook" && urlSegments.length > 1){
+          console.log("getting notebook: " + urlSegments[1]);
+          getNotebook(urlSegments[1]);
+      }
   });

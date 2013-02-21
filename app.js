@@ -36,9 +36,9 @@ function writeFile(filename, data, callbackFn) {
   });
 }
 
-// Implement findQuestion(query) 
+// Implement findQuestion(query)
 //    return the question if found, undefined otherwise
-function findQuestion(query){  
+function findQuestion(query){
 	for(var prop in datastore){
 		var index = prop.indexOf(query);
 		if(index >= 0){
@@ -68,7 +68,7 @@ function computeAnswer(query){
 			question = query.slice(5);
 			answer = eval(question);
 
-			datastore[que] = { 
+			datastore[que] = {
 								"answer": answer,
 								"date": new Date()
 							};
@@ -98,7 +98,7 @@ function computeAnswer(query){
 // get an answer
 app.get('/answer/:question', function (request, response) {
 	var answer = computeAnswer(request.params.question);
-	response.send(answer);	
+	response.send(answer);
 });
 
 // get all answers
@@ -114,7 +114,7 @@ app.get("/answer", function (request, response) {
 
 // create new answer
 app.post("/answer", function(request, response) {
-  datastore[request.body.question] = { 
+  datastore[request.body.question] = {
     "answer": request.body.answer,
     "date": new Date()
   };
@@ -137,6 +137,7 @@ function Entry(){
 	this.content = "";
 	this.desc = "";
 	this.tags = [];
+	this.dateAdded = "";
 	this.dateAccessed = "";
 }
 
@@ -150,14 +151,14 @@ function initServer() {
 
 function initNotebook(name) {
 	//Create notebook object
-	var notebook = new Notebook(name);	
-	
+	var notebook = new Notebook(name);
+
 	//Create file for notebook object
 	writeFile(getDBFilename(name), JSON.stringify(notebook));
-	
-	//Add to appropriate places 
+
+	//Add to appropriate places
 	addToNotebookList(name);
-	
+
 	return notebook;
 }
 
@@ -165,7 +166,7 @@ function initNotebook(name) {
 function addToNotebookList(name){
 	g_notebookList.push(name);
 	g_notebookList.sort();
-	writeFile(getDBFilename("notebooks"), 
+	writeFile(getDBFilename("notebooks"),
 		JSON.stringify(g_notebookList));
 }
 
@@ -179,7 +180,7 @@ function validNotebookName(name){
 	if(name === "notebooks"){
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -189,7 +190,7 @@ function existingNotebookName(name){
 	if(typeof(name) != 'string'){
 		return false;
 	}
-	
+
 	// Checks if the notebook already exists.
 	var inList = g_notebookList.indexOf(name);
 	if(inList >= 0){
@@ -211,10 +212,21 @@ app.get("/static/:staticFilename", function (request, response) {
     response.sendfile("static/" + request.params.staticFilename);
 });
 
+// This route is hit when a specific notebook is requested
+app.get("/notebook/:name", function (request, response) {
+    if(existingNotebookName(request.params.name)) {
+        response.sendfile("static/index.html");
+    } else {
+        response.sendfile("static/" + request.params.name);
+    }
+
+
+});
+
 // Creates a new notebook
 app.post('/create', function (request, response) {
 	var name = 	request.body.name;
-	
+
 	// Checks if the notebook name already exists and if its well-formed
 	if(!validNotebookName(name) || existingNotebookName(name)){
 		response.send({"success": false});
@@ -280,28 +292,30 @@ app.post('/addEntry', function (request, response) {
 app.get('/notebooks', function (request, response) {
 	response.send({"list": g_notebookList,
 				   "success": true
-	});	
+	});
 });
+
+
 
 // Loads an existing notebook
 app.get('/load/:name', function (request, response) {
 	var name = request.params.name;
 	var notebook;
-	
+
 	if(existingNotebookName(name)){
 		readFile(getDBFilename(name), {}, function(err, data) {
 			notebook = JSON.parse(data);
 			console.log(notebook);
 			response.send({"notebook": notebook,
-							"success": true});	
-		});		
+							"success": true});
+		});
 	}
 	else{
-		response.send({"success": false});		
+		response.send({"success": false});
 	}
 });
 
 // Finally, initialize the server, then activate the server at port 8889
 initServer();
 app.listen(8889);
-
+console.log("created server on port 8889");
