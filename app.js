@@ -227,6 +227,54 @@ app.post('/create', function (request, response) {
 	}
 });
 
+/*
+// Deletes an existing notebook
+app.post('/delete', function (request, response) {
+	var name = 	request.body.name;
+	
+	// Checks if the notebook name already exists and if its well-formed
+	if(!validNotebookName(name) || existingNotebookName(name)){
+		response.send({"success": false});
+	}
+	else{
+		var notebook = initNotebook(name);
+		response.send({"notebook": notebook,
+					   "success": true
+					  });
+	}
+});
+
+function validNotebookEntry(entry){
+	var notebook = ;
+}
+
+function addEntry(name, entry){
+	this.content = "";
+	this.desc = "";
+	this.tags = [];
+	this.dateAccessed = "";
+}
+
+// Adds a new entry to an existing notebook
+app.post('/addEntry', function (request, response) {
+	var name = 	request.body.name;
+	var entry = JSON.parse(request.body.entry);
+	
+	// Checks if the notebook name already exists and if its well-formed
+	if(!validNotebookName(name) || existingNotebookName(name) || !validNotebookEntry(entry)){
+		response.send({"success": false});
+	}
+	else{
+		var notebook = addEntry(name, entry);
+		response.send({"notebook": notebook,
+					   "entry": entry,
+					   "success": true
+					  });
+	}	
+});
+
+*/
+
 
 // Loads an existing notebook
 app.get('/notebooks', function (request, response) {

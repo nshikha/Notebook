@@ -168,6 +168,7 @@ var g_notebook;
     });
   } 
 
+  
   // Gets a notebook from the database
   function getNotebook(name) {
     $.ajax({
@@ -180,6 +181,20 @@ var g_notebook;
     });
   } 
   
+   // Adds a notebook to the database
+  function addEntry(name, entry) {
+    $.ajax({
+      type: "post",
+      data: {"name": name,
+			 "entry": entry},
+      url: "/addEntry",
+      success: function(data) {
+        g_notebook = data.notebook;
+      }
+    });
+  } 
+
+ 
   // Logs the list of notebooks from the database.
   // This is supposed to be a secret function.
   function getNotebooks() {
