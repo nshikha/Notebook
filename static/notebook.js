@@ -157,6 +157,12 @@
 var g_notebook;
 var g_searchResults;
 
+  //Takes the user to the notebook's url
+  function toNotebook() {
+      var name = $('#notebook-name-input').val()
+
+  }
+
   // Adds a notebook to the database
   function addNotebook(name) {
     $.ajax({

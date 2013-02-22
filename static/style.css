@@ -1,9 +1,18 @@
 body {
-  background-color: #F2F2F2;
+  background-color: #FFFFFF;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
+/*
+ * white: #FFFFFF
+ * light green: #CBE86B
+ * light beige: #F2E9E1
+ * not quite black: 1C140D
+ * tambe blue: 003366
+ */
 
-strong {
+
+
+/*strong {
   font-weight: bold;
 }
 
@@ -69,3 +78,4 @@ form {
   margin-bottom: 20px;
   margin-left: 10px;
 }
+*/
