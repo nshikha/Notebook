@@ -167,7 +167,7 @@ var g_searchResults;
   function addNotebook(name) {
     $.ajax({
       type: "post",
-      data: {"name": name},
+      data: {"name": name, "dateCreated": new Date()},
       url: "/create",
       success: function(data) {
         g_notebook = data.notebook;
@@ -194,7 +194,7 @@ var g_searchResults;
       type: "get",
       url: "/load/" + name,
       success: function(data) {
-        g_notebook = data.notebook_header;
+        g_notebook = data.notebook;
 		//console.log(g_notebook);
 	  }
     });
@@ -232,6 +232,7 @@ var g_searchResults;
 			 "dateAccessed": dateAccessed},
       url: "/upDate",
       success: function(data) {
+		console.log(data.notebook);
         //g_notebook = data.notebook;
       }
     });
@@ -244,6 +245,7 @@ var g_searchResults;
       data: {"name": name, "entryIndex": entryIndex},
       url: "/removeEntry",
       success: function(data) {
+		console.log(data.notebook);
         //g_notebook = data.notebook;
       }
     });
@@ -312,6 +314,6 @@ function checkNotebook(notebook){
       urlSegments.splice(0,1); // removes "" from the beginning of list
       if(urlSegments[0] === "notebook" && urlSegments.length > 1){
           console.log("getting notebook: " + urlSegments[1]);
-          getNotebook(urlSegments[1]);
+          getNotebookHeader(urlSegments[1]);
       }
   });

@@ -8,9 +8,6 @@ var fs = require("fs");
 // body of a request
 app.use(express.bodyParser());
 
-// The global datastore for this example
-var datastore;
-
 // Asynchronously read file contents, then call callbackFn
 function readFile(filename, defaultData, callbackFn) {
   fs.readFile(filename, function(err, data) {
@@ -36,104 +33,18 @@ function writeFile(filename, data, callbackFn) {
   });
 }
 
-// Implement findQuestion(query)
-//    return the question if found, undefined otherwise
-function findQuestion(query){
-	for(var prop in datastore){
-		var index = prop.indexOf(query);
-		if(index >= 0){
-			return prop;
-		}
-	}
-	var no_answer;
-	return no_answer;
-}
-
-
-// Implement computeAnswer(query)
-//    try to find the question return a successful response (see spec)
-//    otherwise return an unssuccessful response
-function computeAnswer(query){
-	// Takes out metadata and placeholders like %20
-	var que = decodeURI(query);
-
-	// Determine if question is already in datastore
-	var question = findQuestion(que);
-	var answer;
-
-	// Not in the datastore
-	if(typeof(question) == 'undefined'){
-		// Check if its a math request
-		if(que.indexOf('Math:') == 0){
-			question = query.slice(5);
-			answer = eval(question);
-
-			datastore[que] = {
-								"answer": answer,
-								"date": new Date()
-							};
-
-			// Persist the file to the datastore if not already there
-			writeFile("data.txt", JSON.stringify(datastore));
-
-			return {
-				"interpreted": que,
-				"answer": datastore[que].answer,
-				"date": datastore[que].date,
-				"success": true
-			};
-		}
-		return {"success": false};
-	}
-	// In the datastore!
-	else{
-		return {
-			"interpreted": question,
-			"answer": datastore[question].answer,
-			"date": datastore[question].date,
-			"success": true
-		};
-	}
-}
-// get an answer
-app.get('/answer/:question', function (request, response) {
-	var answer = computeAnswer(request.params.question);
-	response.send(answer);
-});
-
-// get all answers
-// This is for serving answers
-app.get("/answer", function (request, response) {
-	json_datastore = JSON.stringify(datastore);
-	response.send({
-		"answers": json_datastore,
-		"success": true
-	});
-});
-
-
-// create new answer
-app.post("/answer", function(request, response) {
-  datastore[request.body.question] = {
-    "answer": request.body.answer,
-    "date": new Date()
-  };
-  writeFile("data.txt", JSON.stringify(datastore));
-  response.send({ success: true });
-});
-
 
 // -------------------------------------------------------------------
 //Set of global variables
 var g_notebookList = [];
 
-function Notebook(name){
+function Notebook(name, date){
 	
 	// The name of the notebook to be added
 	this.name = name;
-	
-	// A list of all the available tags in a given notebook
-	this.alltags = [];
+
+	// The date the notebook was created
+	this.dateCreated = date;
 	
 	// A list of all the entries in a given notebook
 	this.entries = [];
@@ -170,9 +81,9 @@ function initServer() {
 // ----------------------------------------------------------------------
 // All the functions for managing the Notebooks
 
-function initNotebook(name) {
+function initNotebook(name, date) {
 	//Create notebook object
-	var notebook = new Notebook(name);
+	var notebook = new Notebook(name, date);
 
 	//Create file for notebook object
 	writeNotebookToFile(notebook);
@@ -185,9 +96,26 @@ function initNotebook(name) {
 
 // Extracts the notebook header to send back to the client.
 function getNotebookHeader(notebook){
+	var alltags = [];
+	
+	for(var tag in notebook.access_database){
+		var listlength = notebook.access_database[tag].length;
+		alltags.push({"tag": tag, "numEntries": listlength});
+	}
+
+	/*
+	alltags = {};
+	for(var tag in notebook.access_database){
+		var listlength = notebook.access_database[tag].length;
+		alltags[tag] = listlength;
+	}	
+	*/
+	//Object.keys(notebook.access_database)
+	
     return	{"notebook_header": {	"name": notebook.name,
-									"alltags": notebook.alltags,
-									"numEntries" : entries.length
+									"dateCreated": notebook.dateCreated,
+									"alltags": alltags,
+									"numEntries" : notebook.entries.length
 					            },
 					 "success": true}
 }
@@ -274,13 +202,14 @@ app.get("/notebook/:name", function (request, response) {
 // Creates a new notebook
 app.post('/create', function (request, response) {
 	var name = 	request.body.name;
+	var date = request.body.dateCreated;
 
-	// Checks if the notebook name already exists and if its well-formed
-	if(!validNotebookName(name) || existingNotebookName(name)){
+	// Checks if the notebook name already exists and if its well-formed and that a date is provided
+	if(!validNotebookName(name) || existingNotebookName(name) || !date){
 		response.send({"success": false});
 	}
 	else{
-		var notebook = initNotebook(name);
+		var notebook = initNotebook(name, date);
 		response.send({"notebook": notebook,
 					   "success": true
 					  });
@@ -337,7 +266,20 @@ app.post('/removeEntry', function (request, response) {
 				response.send({"success": false});
 			}
 						
-			notebook.entries[index].deleted = true;			
+			var entry = notebook.entries[index];
+			entry.deleted = true;	
+
+			for(var i = 0; i < entry.tags.length; i++){
+				var tag = entry.tags[i];
+				var accessDBList = notebook.access_database[tag];
+				// use this (removes the index from tag list)
+				accessDBList.splice(accessDBList.indexOf(index), 1);
+				
+				// Remove this tag from the database if the database is empty.
+				if(accessDBList.length === 0){
+					delete notebook.access_database[tag];
+				}
+			}
 			
 			// Persist changes to notebook
 			writeNotebookToFile(notebook);
@@ -374,8 +316,7 @@ app.post('/addEntry', function (request, response) {
 			// Add to access_database
 			for(var i = 0; i < dbEntry.tags.length; i++){
 				var tag = dbEntry.tags[i];
-				if(notebook.alltags.indexOf(tag) < 0){
-					notebook.alltags.push(tag);
+				if(notebook.access_database[tag] === undefined){
 					notebook.access_database[tag] = [index];
 				}
 				else{
@@ -433,7 +374,7 @@ app.get('/load/:name', function (request, response) {
 			
 			// Send back the header for the notebook, but not the entries
 			//response.send(getNotebookHeader(notebook));
-			response.send({"notebook_header": notebook, "success": true});
+			response.send({"notebook": notebook, "success": true});
 		});
 	}
 	else{
@@ -493,7 +434,6 @@ app.get('/search/:name/:tag', function (request, response) {
 
 function generateAccessDatabase(notebook){
 	var new_access = {};
-	var new_alltags = [];
 	for(j = 0; j < notebook.entries.length; j++){
 		var entry = notebook.entries[j];
 
@@ -502,8 +442,7 @@ function generateAccessDatabase(notebook){
 			// Add to access_database
 			for(var i = 0; i < entry.tags.length; i++){
 				var tag = entry.tags[i];
-				if(new_alltags.indexOf(tag) < 0){
-					new_alltags.push(tag);
+				if(new_access[tag] === undefined){
 					new_access[tag] = [j];
 				}
 				else{
@@ -513,42 +452,8 @@ function generateAccessDatabase(notebook){
 		}
 	}
 	
-	notebook.alltags = new_alltags;
 	notebook.access_database = new_access;
 }
-
-/*
-function checkNotebook(name){
-	if(name === "notebooks"){ return false; }
-	
-	// Check that each tag in the access database is present in all tags
-	// Check that 
-	readFile(getDBFilename(name), {}, function(err, data) {
-		var notebook = JSON.parse(data);
-		
-		for(var j = 0; j < notebook.entries.length; j++){
-			var entry = notebook.entries[j];
-			
-			if(!entry.deleted){
-				// Add any tags to master list of tags
-				// Add to access_database
-				for(var i = 0; i < entry.tags.length; i++){
-					var tag = entry.tags[i];
-					// If tag isn't present in all tags
-					if(notebook.alltags.indexOf(tag) < 0){
-						console.log( "Tag not found in all tags.");
-						return false;
-					}
-					// If tag isn't present in proper place in access
-					if(notebook.access_database[tag].indexOf(j) < 0){
-						console.log("Tag not found in access database");
-						return false;
-					}
-				}
-			}
-		}
-	}
-}*/
 
 
 
