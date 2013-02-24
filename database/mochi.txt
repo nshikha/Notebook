@@ -1,1 +1,1 @@
-{"name":"mochi","alltags":[],"entries":[],"access_database":{}}
+{"name":"mochi","dateCreated":"Sat Feb 23 2013 12:13:18 GMT-0500 (Eastern Standard Time)","entries":[{"content":"First entry!!!","desc":"","tags":["sex","booya"],"dateAdded":"Sat Feb 23 2013 12:23:45 GMT-0500 (Eastern Standard Time)","dateAccessed":"Sat Feb 23 2013 12:23:45 GMT-0500 (Eastern Standard Time)","deleted":false}],"access_database":{"sex":[0],"booya":[0]}}
