@@ -6,20 +6,21 @@
     <script src="jquery-1.9.0.js"></script>
   </head>
   <body>
-  	    <div class = "cover">
-    		<h1> My Notebook </h1>
-    		<form id = "note">
-    			<input type = "text" name = "link" id = "link" placeholder = "Link" />
-    			<input type = "text" name = "tag" id = "tag" placeholder = "Tags" autocomplete = "on" />
-    			<textarea form = "note" placeholder = "Notes" name = "text" autocomplete = "on"> 
-    			</textarea>
-    		</form>
-    		<div id = "tag-graph">
+  	<div class = "cover">
+    	<h1> Notebook : <span id="notebook-name"></span></h1>
+      <div id="information"></div>
+    	<form id = "note">
+    		<input type = "text" name = "link" id = "link" placeholder = "Link" />
+    		<input type = "text" name = "tag" id = "tag" placeholder = "Tags:  (i.e. #237, '#css, #html')" autocomplete = "on" />
+    		<textarea id = "text" form = "note" placeholder = "Notes" name = "text" autocomplete = "on"></textarea>
+        <a href="#"><img src="plus.png" id="submit-entry"/></a>
+    	</form>
+    	<div id = "tag-graph">
     		<canvas id = "graph" width = "400" height = "300">
-
     		</canvas>
-    		</div>
-
     	</div>
+    </div>
+    <script src="notebook.js"></script>
+    <script src="notebook-page.js"></script>
   </body>
  </html>

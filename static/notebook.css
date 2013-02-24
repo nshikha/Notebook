@@ -22,7 +22,7 @@
 /* #1e282e - darker blue */
 /* background: #143b51; */
 body {
-	background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #FFFFFF), color-stop(1, #042166));	
+	background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #FFFFFF), color-stop(1, #042166));
 }
 
 #note {
@@ -34,6 +34,7 @@ body {
 	height: 200px;
 	border: 2px solid #e3e6ea;
 	background: #fcfcfc;
+  position: relative;
 }
 
 #link,#tag {
@@ -53,6 +54,38 @@ textarea {
 	border: none;
 	overflow: auto;
 }
+
+#submit-entry {
+  position: absolute;
+  margin-top: 10px;
+  width: 32px;
+  height: 32px;
+  right: 10px;
+  bottom: 10px;
+  opacity: 0.4;
+}
+
+#information {
+  margin: 5px auto;
+  width: 300px;
+}
+
+.error {
+  background-color: #F2DEDE;
+  border: 2px solid #FF0000;
+  padding: 10px;
+  color: #B94A48;
+}
+.error p {
+  margin: 5px;
+}
+.success {
+  background-color: #DFF0D8;
+  border: 2px solid #468847;
+  padding: 10px;
+  color: green;
+}
+
 
 #tag-graph {
 	margin: 0 auto;
