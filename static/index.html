@@ -1,83 +1,18 @@
-<!DOCTYPE html>
 <html>
-  <head>
-    <link href="reset.css" rel="stylesheet" type="text/css">
-    <link href="style.css" rel="stylesheet" type="text/css">
-  </head>
-  <body>
+	<head>
+		<link href='http://fonts.googleapis.com/css?family=GFS+Didot' rel='stylesheet' type='text/css'>
+		<link href="reset.css" rel="stylesheet" type="text/css">
+    	<link href="index.css" rel="stylesheet" type="text/css">
+    	<script src="jquery-1.9.0.js"></script>
+    </head>
+    <body>
+    	<div class = "cover">
+    		<h1> My Notebook </h1>
+    		<form>
+    			<input type = "text" name = "notebookName" id = "name" placeholder = " Enter new or existing notebook" />
+    			<input type = "button" name = "go" id = "go" value = "Go" />
+    		</form>
 
-
-    <div class="splash-page">
-      <div class="header">
-        <h1>Notebooks.mi</h1>
-      </div>
-
-      <div id="find-notebook">
-        <form name="findNotebook" action="javascript:toNotebook()">
-          <div class="row">
-            <label>Notebook Name:</label>  <input id="notebook-name-input" name="notebookName" type="text" placeholder="Anything"/>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <div id="notebook-page">
-      <div class="header">
-        <h1>Notebook Name:</h1>
-        <span class="searchbox">
-          <input id="search-input" name="searchName" type="text" placeholder="Search by hashtag"/>
-          <button id="search-button">Search!</button>
-        </span>
-      </div>
-
-      <div id="notebook-entries">
-        <div class="entry">
-          <span> Date added </span>
-          <p class="entry-body">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-          </p>
-          <a href="#" class="entry-edit">Edit</a>
-          <a href="#" class="entry-delete">Delete</a>
-        </div>
-        <div class="entry">
-          <span> Date added </span>
-          <p class="entry-body">
-            This is cool <a href="#">http://asldkjfal</a>.
-          </p>
-          <a href="#" class="entry-edit">Edit</a>
-          <a href="#" class="entry-delete">Delete</a>
-        </div>
-      </div>
-    </div>
-
-    <div id="notebook-page-no-entries">
-      <div class="header">
-        <h1>Notebook Name:</h1>
-        <span class="searchbox">
-          <input id="search-input" name="searchName" type="text" placeholder="Search by hashtag"/>
-          <button id="search-button">Search!</button>
-        </span>
-      </div>
-
-      <div id="notebook-about">
-        <span class="notebook-created-date">Date created</span>: something
-        <span class="notebook-num-entries">Num entries</span>: something
-      </div>
-
-      <div id="notebook-tags">
-        <ul>
-          <li>#something<li>
-          <li>#thing<li>
-          <li>#that<li>
-          <li>#is<li>
-          <li>#a<li>
-          <li>#tag<li>
-        </ul>
-      </div>
-    </div>
-
-
-	<script src="jquery-1.9.0.js"></script>
-	<script src="notebook.js"></script>
-	</body>
+    	</div>
+    </body>
 </html>
