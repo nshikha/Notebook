@@ -34,6 +34,9 @@ function submitEntry() {
                                  info.html("");
                                  info.removeClass("success");
                              }, 5000);
+                             $("#link").val("");
+                             $("#tag").val("");
+                             $("#text").val("");
                          });
     }
 }
@@ -44,6 +47,27 @@ function displayNotebookName() {
 }
 
 
+function showCreateNotebook() {
+    $("#spotlight").show();
+    $("#cancel-new").click(function() {
+        var origin = window.location.origin;
+        window.location = origin+"/static/index.html";
+    });
+    $("#create-new").click(function() {
+        addNotebook(g_parsedName, function () {
+            var info = $("#information");
+            displayNotebookName();
+            info.append($("<p>").html("Created new notebook!"));
+            info.addClass("success");
+            window.setTimeout(function() {
+                info.html("");
+                info.removeClass("success");
+            }, 5000);
+            $("#spotlight").hide();
+        });
+    });
+}
+
 $(document).ready(function() {
 	  console.log("Some functions: ");
 	  console.log("getNotebooks(), addNotebook(name), getNotebook(name), addEntryWithData(name, content, listOfTags), removeEntry(name, entryIndex), upDate(name, entryIndex, dateAccessed), checkNotebook(notebook), searchNotebook(name, tag)");
@@ -52,8 +76,9 @@ $(document).ready(function() {
     var urlSegments = window.location.pathname.split('/');
     urlSegments.splice(0,1); // removes "" from the beginning of list
     if(urlSegments[0] === "notebook" && urlSegments.length > 1){
-        console.log("getting notebook: " + urlSegments[1]);
-        getNotebookHeader(urlSegments[1], displayNotebookName);
+        g_parsedName = urlSegments[1];
+        console.log("getting notebook: " + g_parsedName);
+        getNotebookHeader(g_parsedName, displayNotebookName, showCreateNotebook);
     }
 
     //setup submit button

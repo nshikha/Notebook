@@ -25,7 +25,7 @@
 body {
 	background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #FFFFFF), color-stop(1, #042166));
 	font-family: 'GFS Didot', serif;
-	
+
 }
 
 form {
@@ -49,6 +49,21 @@ input::-webkit-input-placeholder,::-moz-input-placeholder {
 	font-size: 13px;
 }
 
+#information {
+  margin: 5px auto;
+  width: 300px;
+}
+
+.error {
+  background-color: #F2DEDE;
+  border: 2px solid #FF0000;
+  padding: 10px;
+  color: #B94A48;
+}
+.error p {
+  margin: 5px;
+}
+
 #go {
 	border-radius: 3px;
 	color: white;
@@ -65,5 +80,4 @@ input::-webkit-input-placeholder,::-moz-input-placeholder {
 
 #go:hover{
 	box-shadow: 1px 1px 2px 1px #636363;
-
 }

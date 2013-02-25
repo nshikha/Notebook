@@ -22,7 +22,7 @@
 /* #1e282e - darker blue */
 /* background: #143b51; */
 body {
-	background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #FFFFFF), color-stop(1, #042166));
+	  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #FFFFFF), color-stop(1, #042166));
 }
 
 #note {
@@ -69,7 +69,6 @@ textarea {
   margin: 5px auto;
   width: 300px;
 }
-
 .error {
   background-color: #F2DEDE;
   border: 2px solid #FF0000;
@@ -96,4 +95,60 @@ textarea {
 
 canvas {
 	border: 2px solid black;
+}
+
+
+/* Modal dialog */
+#spotlight {
+  background: rgba(0,0,0,0.9);
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  position: absolute;
+  z-index: 100;
+  display: none;
+}
+
+#wrapper {
+  padding-top: 100px;
+  text-align: center;
+  vertical-align: middle;
+  width: 100%;
+}
+
+#stage-newNotebook {
+  box-shadow: 0 0 20px #000000;
+  margin-left: 25%;
+  background-color: #FFFFFF;
+  width: 50%;
+}
+
+#stage-newNotebook h2 {
+  background-color: #042166;
+  color: #FFFFFF;
+  font-weight: bold;
+  font-size: 32px;
+  padding: 10px;
+}
+
+#stage-newNotebook p {
+  padding: 20px;
+  font-size: 18px;
+}
+
+#cancel-new {
+  background: #DD3636;
+  padding: 10px 20px;
+  border: none;
+  color: #FFFFFF;
+  font-size: 20px;
+}
+
+#create-new {
+  background: #5DB95D;
+  padding: 10px 20px;
+  border: none;
+  color: #FFFFFF;
+  font-size: 20px;
 }

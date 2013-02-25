@@ -10,35 +10,40 @@
 
 var g_notebook;
 var g_searchResults;
+var g_parsedName; // notebook name we get from url
 
-//Takes the user to the notebook's url
-function toNotebook() {
-    var name = $('#notebook-name-input').val()
-
-}
 
 // Adds a notebook to the database
-function addNotebook(name) {
+function addNotebook(name, callback) {
     $.ajax({
         type: "post",
         data: {"name": name, "dateCreated": new Date()},
         url: "/create",
         success: function(data) {
             g_notebook = data.notebook;
+            if(callback !== undefined && typeof(callback) === "function")
+                callback();
         }
     });
 }
 
 
 // Gets a notebook header from the database
-function getNotebookHeader(name, callback) {
+function getNotebookHeader(name, callback, err_callback) {
     $.ajax({
         type: "get",
         url: "/loadHeader/" + name,
         success: function(data) {
-            g_notebook = data.notebook_header;
-            if(callback !== undefined && typeof(callback) === "function")
-                callback();
+            console.log(typeof(data.success));
+            if(data.success) {
+                g_notebook = data.notebook_header;
+                if(callback !== undefined && typeof(callback) === "function")
+                    callback();
+            } else {
+                if(err_callback !== undefined &&
+                   typeof(err_callback) === "function")
+                    err_callback();
+            }
 	      }
     });
 }

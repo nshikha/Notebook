@@ -37,6 +37,8 @@ function writeFile(filename, data, callbackFn) {
 // -------------------------------------------------------------------
 //Set of global variables
 var g_notebookList = [];
+//List of static files
+var g_staticFiles = [];
 
 function Notebook(name, date){
 
@@ -74,6 +76,10 @@ function initServer() {
   var defaultList = "[]";
   readFile(getDBFilename("notebooks"), defaultList, function(err, data) {
 	g_notebookList = JSON.parse(data);
+  });
+  //get list of static files
+  fs.readdir("static/", function(err, files) {
+      g_staticFiles = files;
   });
 }
 
@@ -164,6 +170,14 @@ function existingNotebookName(name){
 	return false;
 }
 
+// Checks if the given name is a static file
+function staticFile(name) {
+    var inList = g_staticFiles.indexOf(name);
+    if(inList < 0) return false;
+    else return true;
+
+}
+
 
 // Given the name of a file, returns filepath string.
 function getDBFilename(name){
@@ -190,7 +204,8 @@ app.get("/static/:staticFilename", function (request, response) {
 
 // This route is hit when a specific notebook is requested
 app.get("/notebook/:name", function (request, response) {
-    if(existingNotebookName(request.params.name)) {
+    var name = request.params.name
+    if(existingNotebookName(name) || !staticFile(name)) {
         response.sendfile("static/notebook.html");
     } else {
         response.sendfile("static/" + request.params.name);
