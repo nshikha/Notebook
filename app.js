@@ -37,19 +37,21 @@ function writeFile(filename, data, callbackFn) {
 // -------------------------------------------------------------------
 //Set of global variables
 var g_notebookList = [];
+//List of static files
+var g_staticFiles = [];
 
 function Notebook(name, date){
-	
+
 	// The name of the notebook to be added
 	this.name = name;
 
 	// The date the notebook was created
 	this.dateCreated = date;
-	
+
 	// A list of all the entries in a given notebook
 	this.entries = [];
-	
-	// An object where the keys are the tag names, 
+
+	// An object where the keys are the tag names,
 	// The values are an array of indices into entries[] which have the tag that was used as the key.
 	this.access_database = {};
 }
@@ -65,13 +67,13 @@ function Entry(entry, index){
 	// Index is specifically used to identify entries between the front and back end.
 	this.index = -1;
 	this.deleted = false;
-	
+
 	if(entry.content){ this.content = entry.content}
 	if(entry.desc){ this.desc = entry.desc}
 	if(entry.tags){ this.tags = entry.tags}
 	if(entry.dateAdded){ this.dateAdded = entry.dateAdded}
 	if(entry.dateAccessed){ this.dateAccessed = entry.dateAccessed}	
-	if(index){ this.index = index}
+	if(index !== undefined){ this.index = index}
 }
 
 function initServer() {
@@ -79,6 +81,10 @@ function initServer() {
   var defaultList = "[]";
   readFile(getDBFilename("notebooks"), defaultList, function(err, data) {
 	g_notebookList = JSON.parse(data);
+  });
+  //get list of static files
+  fs.readdir("static/", function(err, files) {
+      g_staticFiles = files;
   });
 }
 
@@ -92,7 +98,7 @@ function initNotebook(name, date) {
 
 	//Create file for notebook object
 	writeNotebookToFile(notebook);
-	
+
 	//Add to appropriate places
 	addToNotebookList(name);
 
@@ -102,7 +108,7 @@ function initNotebook(name, date) {
 // Extracts the notebook header to send back to the client.
 function getNotebookHeader(notebook){
 	var alltags = [];
-	
+
 	for(var tag in notebook.access_database){
 		var listlength = notebook.access_database[tag].length;
 		alltags.push({"tag": tag, "numEntries": listlength});
@@ -113,10 +119,10 @@ function getNotebookHeader(notebook){
 	for(var tag in notebook.access_database){
 		var listlength = notebook.access_database[tag].length;
 		alltags[tag] = listlength;
-	}	
+	}
 	*/
 	//Object.keys(notebook.access_database)
-	
+
     return	{"notebook_header": {	"name": notebook.name,
 									"dateCreated": notebook.dateCreated,
 									"alltags": alltags,
@@ -170,6 +176,14 @@ function existingNotebookName(name){
 	return false;
 }
 
+// Checks if the given name is a static file
+function staticFile(name) {
+    var inList = g_staticFiles.indexOf(name);
+    if(inList < 0) return false;
+    else return true;
+
+}
+
 
 // Given the name of a file, returns filepath string.
 function getDBFilename(name){
@@ -196,8 +210,9 @@ app.get("/static/:staticFilename", function (request, response) {
 
 // This route is hit when a specific notebook is requested
 app.get("/notebook/:name", function (request, response) {
-    if(existingNotebookName(request.params.name)) {
-        response.sendfile("static/index.html");
+    var name = request.params.name
+    if(existingNotebookName(name) || !staticFile(name)) {
+        response.sendfile("static/notebook.html");
     } else {
         response.sendfile("static/" + request.params.name);
     }
@@ -227,7 +242,7 @@ app.post('/upDate', function (request, response) {
 	var name = 	request.body.name;
 	var index = request.body.entryIndex;
 	var dateAccessed = request.body.dateAccessed;
-	
+
 	if(!existingNotebookName(name)){
 		console.log("Removes entry from non-existent entry.");
 		response.send({"success": false});
@@ -236,28 +251,28 @@ app.post('/upDate', function (request, response) {
 		readFile(getDBFilename(name), {}, function(err, data) {
 			notebook = JSON.parse(data);
 			console.log(notebook);
-			
+
 			if(index >= notebook.entries.length){
 				response.send({"success": false});
 			}
-						
-			notebook.entries[index].dateAccessed = dateAccessed;			
+
+			notebook.entries[index].dateAccessed = dateAccessed;
 			// Persist changes to notebook
 			writeNotebookToFile(notebook);
-			
+
 			// Send back the updated notebook
 			response.send({"notebook": notebook,
 						   "success": true
 					  });
 		});
-	}	
+	}
 });
 
 // Removes an entry from a notebook
 app.post('/removeEntry', function (request, response) {
 	var name = 	request.body.name;
 	var index = request.body.entryIndex;
-	
+
 	// Checks if the notebook name already exists and if its well-formed
 	if(!existingNotebookName(name)){
 		console.log("Removes entry from non-existent entry.");
@@ -267,7 +282,7 @@ app.post('/removeEntry', function (request, response) {
 		readFile(getDBFilename(name), {}, function(err, data) {
 			notebook = JSON.parse(data);
 			console.log(notebook);
-			
+
 			if(index >= notebook.entries.length){
 				response.send({"success": false});
 			}
@@ -285,6 +300,7 @@ app.post('/removeEntry', function (request, response) {
 					if(accessDBList.length === 0){
 						delete notebook.access_database[tag];
 					}
+
 				}
 				
 				// Persist changes to notebook
@@ -295,8 +311,9 @@ app.post('/removeEntry', function (request, response) {
 							   "success": true
 						  });
 			}
+
 		});
-	}	
+	}
 });
 
 
@@ -304,7 +321,7 @@ app.post('/removeEntry', function (request, response) {
 app.post('/addEntry', function (request, response) {
 	var name = 	request.body.name;
 	var entry = request.body.entry;
-	
+
 	// Checks if the notebook name already exists and if its well-formed
 	if(!validNotebookName(name) || !existingNotebookName(name) || !validNotebookEntry(entry)){
 		console.log("Something went wrong");
@@ -333,17 +350,17 @@ app.post('/addEntry', function (request, response) {
 					notebook.access_database[tag].push(index);
 				}
 			}
-			
+
 			// Persist changes to notebook
 			writeNotebookToFile(notebook);
-			
+
 			// Send back the formatted databaseEntry
 			response.send({"notebook": notebook,
 							"entry" : dbEntry,
 						   "success": true
 					  });
 		});
-	}	
+	}
 });
 
 // Loads the list of notebooks for someone to look at.
@@ -362,7 +379,7 @@ app.get('/loadHeader/:name', function (request, response) {
 		readFile(getDBFilename(name), {}, function(err, data) {
 			notebook = JSON.parse(data);
 			console.log(notebook);
-			
+
 			// Send back the header for the notebook, but not the entries
 			response.send(getNotebookHeader(notebook));
 		});
@@ -381,7 +398,7 @@ app.get('/load/:name', function (request, response) {
 		readFile(getDBFilename(name), {}, function(err, data) {
 			notebook = JSON.parse(data);
 			console.log(notebook);
-			
+
 			// Send back the header for the notebook, but not the entries
 			//response.send(getNotebookHeader(notebook));
 			response.send({"notebook": notebook, "success": true});
@@ -413,12 +430,7 @@ function unionTags(notebook, tags){
 	var list = [];
 	for(var i = 0; i < tags.length; i++){
 		var tag = tags[i];
-	
-		// Check if the input was malformed.
-		if(("" + parseInt(tag)) !== tag){
-			return undefined;
-		}
-		
+			
 		var tagList = notebook.access_database[tag];
 		if(tagList !== undefined){
 			list = list.concat(tagList);
@@ -436,12 +448,7 @@ function intersectTags(notebook, tags){
 	var list =[];
 	for(var i = 0; i < tags.length; i++){
 		var tag = tags[i];
-	
-		// Check if the input was malformed.
-		if(("" + parseInt(tag)) !== tag){
-			return undefined;
-		}
-	
+		
 		var tagList = notebook.access_database[tag];
 		
 		// Check whether the tag has anything yet.
@@ -480,8 +487,6 @@ function parseSearch(notebook, tagString){
 	if(tagString.indexOf(tokens.union) >= 0){
 		tags = tagString.split(tokens.union);
 		searchResults = unionTags(notebook, tags);
-		console.log(searchResults);
-
 	}
 	else if(tagString.indexOf(tokens.intersection) >= 0){
 		tags = tagString.split(tokens.intersection);
@@ -514,6 +519,7 @@ app.get('/search/:name/:tags', function (request, response) {
 	if(existingNotebookName(name)){
 		readFile(getDBFilename(name), {}, function(err, data) {
 			var notebook = JSON.parse(data);
+
 			var entries = parseSearch(notebook, tags);
 			if(entries === undefined){
 				response.send({"success": false});
@@ -546,10 +552,10 @@ function generateAccessDatabase(notebook){
 				else{
 					new_access[tag].push(j);
 				}
-			}		
+			}
 		}
 	}
-	
+
 	notebook.access_database = new_access;
 }
 
