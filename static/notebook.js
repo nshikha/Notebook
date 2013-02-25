@@ -155,6 +155,7 @@
 
 //----------------------------------------
 var g_notebook;
+var g_parseTokens;
 var g_searchResults;
 
   //Takes the user to the notebook's url
@@ -183,7 +184,8 @@ var g_searchResults;
       url: "/loadHeader/" + name,
       success: function(data) {
         g_notebook = data.notebook_header;
-		//console.log(g_notebook);
+		g_parseTokens = data.parsing_delimeters;
+		console.log(g_notebook);
 	  }
     });
   }  
@@ -195,7 +197,7 @@ var g_searchResults;
       url: "/load/" + name,
       success: function(data) {
         g_notebook = data.notebook;
-		//console.log(g_notebook);
+		console.log(g_notebook);
 	  }
     });
   }
@@ -219,7 +221,7 @@ var g_searchResults;
       url: "/addEntry",
       success: function(data) {
 		console.log(data.notebook);
-        //g_notebook = data.notebook;
+        g_notebook = data.notebook;
       }
     });
   }
@@ -233,7 +235,7 @@ var g_searchResults;
       url: "/upDate",
       success: function(data) {
 		console.log(data.notebook);
-        //g_notebook = data.notebook;
+        g_notebook = data.notebook;
       }
     });
   }  
@@ -246,17 +248,20 @@ var g_searchResults;
       url: "/removeEntry",
       success: function(data) {
 		console.log(data.notebook);
-        //g_notebook = data.notebook;
+        g_notebook = data.notebook;
       }
     });
   }    
   
   // Searches a notebook for a tag
-  function searchNotebook(name, tag) {
+  // Use g_parseTokens to make search queries properly.
+  // If a malformed request is sent, then it will fail!
+  function searchNotebook(name, tagString) {
     $.ajax({
       type: "get",
-      url: "/search/" + name + "/" + tag,
+      url: "/search/" + name + "/" + tagString,
       success: function(data) {
+		console.log(data.results);
 		g_searchResults = data.results;
 	  }
     });
