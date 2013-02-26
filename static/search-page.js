@@ -19,10 +19,10 @@ function generateEntries(entries) {
         }
         var tags = $('<p class="tags">').html(String(e.tags));
         var date = $("<span>").html(e.dateAdded)
-        var edit = $('<a href="#" class="edit">').click(function () {
+        var edit = $('<a href="#" class="edit">edit</a>').click(function () {
             editEntryDialog(e);
         });
-        var del = $('<a href="#" class="delete">').click(function() {
+        var del = $('<a href="#" class="delete">del</a>').click(function() {
             removeEntry(g_notebook.name, e.index);
             displayEntries();
         });
