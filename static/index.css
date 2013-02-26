@@ -1,31 +1,42 @@
 
 /*background: #f7f4f4; */
 .cover {
-	margin-top: 80px;
 	padding: 5px;
-	background: white;
-	box-shadow: inset 0 0 12px 5px #696969;
-	-moz-box-shadow: inset 0 0 12px 5px #696969;
-	-webkit-box-shadow: inset 0 0 12px 5px #696969;
+	background-color: #f9f9f9;
+	box-shadow: inset 0 0 12px 1px #696969;
+	-moz-box-shadow: inset 0 0 12px 1px #696969;
+	-webkit-box-shadow: inset 0 0 12px 1px #696969;
 	height: 100%;
-	width: 100%;
+	width: 80%;
+	text-align: center;
+	margin: 0 auto; 
 }
 
 /* my notebook headline */
 .cover h1 {
 	margin-top: 30px;
 	font-family: 'GFS Didot', serif;
-	font-size: 100px;
+	font-size: 90px;
 	text-align: center;
 	color: #2c353d;
+	text-shadow: 0px 1px 2px #fff;
+}
+/*
+canvas {
+	background-color: #c9163f;
+	float: left;
+	margin-left: 15%;
+	width: 10px;
+	height: 100%;
+	box-shadow: 1px 1px 1px 1px #696969;
 }
 
 /* #1e282e - darker blue */
 /* background: #143b51; */
 body {
-	background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #FFFFFF), color-stop(1, #042166));
+	background-color: #BF4C40;
 	font-family: 'GFS Didot', serif;
-
+	text-align: center;
 }
 
 form {
@@ -36,6 +47,7 @@ form {
 }
 
 #name {
+	margin: 2px;
 	width: 220px;
 	height: 40px;
 	font-size: 20px;
@@ -56,12 +68,13 @@ input::-webkit-input-placeholder,::-moz-input-placeholder {
 
 .error {
   background-color: #F2DEDE;
-  border: 2px solid #FF0000;
-  padding: 10px;
+  border: 2px solid #d58a8a;
+  padding: 4px;
   color: #B94A48;
+  font-size: 14px;
 }
 .error p {
-  margin: 5px;
+  margin: 6px;
 }
 
 #go {
@@ -69,15 +82,33 @@ input::-webkit-input-placeholder,::-moz-input-placeholder {
 	color: white;
 	font-size: 16px;
 	border: 0px;
-	margin: 0px;
 	margin-left: 10px;
 	width: 40px;
-	height: 40px;
+	height: 39px;
 	background-color: #5f95ea;
 	text-shadow: 1px 1px 1px #000;
-	box-shadow: 0 0 3px #696
+	box-shadow: 0 0 3px #696;
 }
 
 #go:hover{
 	box-shadow: 1px 1px 2px 1px #636363;
+}
+
+#go:active{
+  	-webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.05);
+  	-moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.05);
+  	box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+footer {
+	position: absolute;
+	bottom: 8px;
+	height: 20px;
+	margin: 0 auto;
+	width: 80%;
+	text-align: center;
+	font-family: 'Muli', sans-serif;
+	font-size: 14px;
+	font-style: italic;
+	color: #c6c2c2;
 }

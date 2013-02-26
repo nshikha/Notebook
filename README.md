@@ -18,5 +18,6 @@ TODO:
 		-All lowercase?
 		-No numbers?
 		-Must be something that can be written to a filename
-	-Ask Dan about how he wants the alltags datastructure
-		-Use Object.keys(obj) to extract the object properties.
+	-Parse hashtags correctly on frontend. It's not working right now.
+	-Sort by search criterion
+	-Link search with MRU/LRU

@@ -94,12 +94,28 @@ function addEntryWithData(name, link, listOfTags, text, callback){
 	  }
 }
 
-// Adds a notebook to the database
+// Adds an entry to the database
 function addEntry(name, entry, callback) {
     $.ajax({
         type: "post",
         data: {"name": name, "entry": entry},
         url: "/addEntry",
+        success: function(data) {
+		        console.log(data.notebook);
+            if(callback !== undefined && typeof(callback) === "function")
+                callback();
+            //g_notebook = data.notebook;
+        }
+    });
+}
+
+// Edits an entry in the the database
+function editEntry(name, newEntry, callback) {
+	newEntry.dateAccessed = new Date();
+    $.ajax({
+        type: "post",
+        data: {"name": name, "entry": newEntry},
+        url: "/editEntry",
         success: function(data) {
 		        console.log(data.notebook);
             if(callback !== undefined && typeof(callback) === "function")

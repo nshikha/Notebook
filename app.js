@@ -288,6 +288,39 @@ app.post('/upDate', function (request, response) {
 	}
 });
 
+function addEntryTags(notebook, dbEntry){
+	var index = dbEntry.index;
+
+	// Add any tags to master list of tags
+	// Add to access_database
+	for(var i = 0; i < dbEntry.tags.length; i++){
+		var tag = dbEntry.tags[i];
+		if(notebook.access_database[tag] === undefined){
+			notebook.access_database[tag] = [index];
+		}
+		else{
+			notebook.access_database[tag].push(index);
+		}
+	}
+}
+
+function deleteEntryTags(notebook, index){
+	var oldEntry = notebook.entries[index];
+
+	// Removes all of the oldEntry tags.
+	for(var i = 0; i < oldEntry.tags.length; i++){
+		var tag = oldEntry.tags[i];
+		var accessDBList = notebook.access_database[tag];
+		// use this (removes the index from tag list)
+		accessDBList.splice(accessDBList.indexOf(index), 1);
+
+		// Remove this tag from the database if the database is empty.
+		if(accessDBList.length === 0){
+			delete notebook.access_database[tag];
+		}
+	}
+}
+
 // Removes an entry from a notebook
 app.post('/removeEntry', function (request, response) {
 	var name = 	request.body.name;
@@ -310,18 +343,8 @@ app.post('/removeEntry', function (request, response) {
 				var entry = notebook.entries[index];
 				entry.deleted = true;
 
-				for(var i = 0; i < entry.tags.length; i++){
-					var tag = entry.tags[i];
-					var accessDBList = notebook.access_database[tag];
-					// use this (removes the index from tag list)
-					accessDBList.splice(accessDBList.indexOf(index), 1);
-
-					// Remove this tag from the database if the database is empty.
-					if(accessDBList.length === 0){
-						delete notebook.access_database[tag];
-					}
-
-				}
+				// Remove associated tags from access_database
+				deleteEntryTags(notebook, index);
 
 				// Persist changes to notebook
 				writeNotebookToFile(notebook);
@@ -336,6 +359,49 @@ app.post('/removeEntry', function (request, response) {
 	}
 });
 
+// Edits an entry in the existing notebook
+app.post('/editEntry', function (request, response) {
+	var name = 	request.body.name;
+	var entry = request.body.entry;
+
+	// Checks if the notebook name already exists and if its well-formed
+	if(!validNotebookName(name) || !existingNotebookName(name) || !validNotebookEntry(entry)){
+		console.log("Something went wrong");
+		response.send({"success": false});
+	}
+	else{
+		readFile(getDBFilename(name), {}, function(err, data) {
+			notebook = JSON.parse(data);
+			console.log(notebook);
+
+			var index = entry.index;
+
+			var dbEntry = new Entry(entry, index);
+
+			if(index >= notebook.entries.length){
+				response.send({"success":false});
+			}
+			else{
+				// Removes the old tags from the notebook
+				deleteEntryTags(notebook, index);
+
+				notebook.entries[index] = dbEntry;
+
+				// Adds the tags into the appropriate place in the notebook.
+				addEntryTags(notebook, dbEntry);
+
+				// Persist changes to notebook
+				writeNotebookToFile(notebook);
+
+				// Send back the formatted databaseEntry
+				response.send({"notebook": notebook,
+								"entry" : dbEntry,
+							   "success": true
+						  });
+			}
+		});
+	}
+});
 
 // Adds a new entry to an existing notebook
 app.post('/addEntry', function (request, response) {
@@ -359,17 +425,10 @@ app.post('/addEntry', function (request, response) {
 			// Add entry to list of entries in notebook, get its index
 		    notebook.entries.push(dbEntry);
 
-			// Add any tags to master list of tags
-			// Add to access_database
-			for(var i = 0; i < dbEntry.tags.length; i++){
-				var tag = dbEntry.tags[i];
-				if(notebook.access_database[tag] === undefined){
-					notebook.access_database[tag] = [index];
-				}
-				else{
-					notebook.access_database[tag].push(index);
-				}
-			}
+
+			// Adds the tags into the appropriate place in the notebook.
+			addEntryTags(notebook, dbEntry);
+
 
 			// Persist changes to notebook
 			writeNotebookToFile(notebook);
