@@ -67,7 +67,6 @@ input::-webkit-input-placeholder,::-moz-input-placeholder {
 	margin-left: 10px;
 	width: 47px;
 	height: 47px;
-	background-image: url('img/search.png');
 	text-shadow: 1px 1px 1px #000;
 	box-shadow: 0 0 3px #696
 }
