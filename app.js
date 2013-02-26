@@ -62,8 +62,8 @@ function Entry(entry, index){
 	this.tags = [];
 	this.dateAdded = "";
 	this.dateAccessed = "";
-	
-	// This is more backend data. 
+
+	// This is more backend data.
 	// Index is specifically used to identify entries between the front and back end.
 	this.index = -1;
 	this.deleted = false;
@@ -72,7 +72,7 @@ function Entry(entry, index){
 	if(entry.desc){ this.desc = entry.desc}
 	if(entry.tags){ this.tags = entry.tags}
 	if(entry.dateAdded){ this.dateAdded = entry.dateAdded}
-	if(entry.dateAccessed){ this.dateAccessed = entry.dateAccessed}	
+	if(entry.dateAccessed){ this.dateAccessed = entry.dateAccessed}
 	if(index !== undefined){ this.index = index}
 }
 
@@ -128,7 +128,7 @@ function getNotebookHeader(notebook){
 									"alltags": alltags,
 									"numEntries" : notebook.entries.length
 					            },
-					 "parsing_delimeters": getParseTokens(), 
+					 "parsing_delimeters": getParseTokens(),
 					 "success": true}
 }
 
@@ -211,13 +211,33 @@ app.get("/static/:staticFilename", function (request, response) {
 // This route is hit when a specific notebook is requested
 app.get("/notebook/:name", function (request, response) {
     var name = request.params.name
+    console.log(name);
     if(existingNotebookName(name) || !staticFile(name)) {
         response.sendfile("static/notebook.html");
     } else {
         response.sendfile("static/" + request.params.name);
     }
+});
 
 
+app.get("/notebook/:name/all/:herp", function(request, response) {
+    var name = request.params.name
+    var herp = request.params.herp;
+    if(existingNotebookName(name) && !staticFile(herp)) {
+        response.sendfile("static/search.html");
+    } else {
+        response.sendfile("static/" + request.params.herp);
+    }
+});
+
+app.get("/notebook/:name/search/:query", function (request, response) {
+    var name = request.params.name;
+    var query = request.params.query;
+    if(existingNotebookName(name) && !staticFile(query)) {
+        response.sendfile("static/search.html");
+    } else {
+        response.sendfile("static/" + request.params.query);
+    }
 });
 
 // Creates a new notebook
@@ -286,26 +306,26 @@ app.post('/removeEntry', function (request, response) {
 			if(index >= notebook.entries.length){
 				response.send({"success": false});
 			}
-			else{			
+			else{
 				var entry = notebook.entries[index];
-				entry.deleted = true;	
+				entry.deleted = true;
 
 				for(var i = 0; i < entry.tags.length; i++){
 					var tag = entry.tags[i];
 					var accessDBList = notebook.access_database[tag];
 					// use this (removes the index from tag list)
 					accessDBList.splice(accessDBList.indexOf(index), 1);
-					
+
 					// Remove this tag from the database if the database is empty.
 					if(accessDBList.length === 0){
 						delete notebook.access_database[tag];
 					}
 
 				}
-				
+
 				// Persist changes to notebook
 				writeNotebookToFile(notebook);
-				
+
 				// Send back the updated notebook
 				response.send({"notebook": notebook,
 							   "success": true
@@ -332,13 +352,13 @@ app.post('/addEntry', function (request, response) {
 			notebook = JSON.parse(data);
 			console.log(notebook);
 
-			var index = notebook.entries.length;		
-			
+			var index = notebook.entries.length;
+
 			var dbEntry = new Entry(entry, index);
-			
+
 			// Add entry to list of entries in notebook, get its index
 		    notebook.entries.push(dbEntry);
-			
+
 			// Add any tags to master list of tags
 			// Add to access_database
 			for(var i = 0; i < dbEntry.tags.length; i++){
@@ -411,17 +431,25 @@ app.get('/load/:name', function (request, response) {
 
 /*2.2. Reserved Characters
 
-Many URI include components consisting of or delimited by, certain special characters. These characters are called "reserved", since their usage within the URI component is limited to their reserved purpose. If the data for a URI component would conflict with the reserved purpose, then the conflicting data must be escaped before forming the URI.
+Many URI include components consisting of or delimited by, certain special
+characters. These characters are called "reserved", since their usage within the
+URI component is limited to their reserved purpose. If the data for a URI
+component would conflict with the reserved purpose, then the conflicting data
+must be escaped before forming the URI.
 
  reserved    = ";" | "/" | "?" | ":" | "@" | "&" | "=" | "+" |
                 "$" | ","
-The "reserved" syntax class above refers to those characters that are allowed within a URI, but which may not be allowed within a particular component of the generic URI syntax*/
+The "reserved" syntax class above refers to those characters that are allowed
+ within a URI, but which may not be allowed within a particular component of
+ the generic URI syntax
+
+*/
 
 // Parse tokens
 function getParseTokens(){
 	return {
-		'union' : "+++",
-		'intersection' : "^^^"
+		'union' : "+",
+		'intersection' : "^"
 	};
 }
 
@@ -430,7 +458,7 @@ function unionTags(notebook, tags){
 	var list = [];
 	for(var i = 0; i < tags.length; i++){
 		var tag = tags[i];
-			
+
 		var tagList = notebook.access_database[tag];
 		if(tagList !== undefined){
 			list = list.concat(tagList);
@@ -448,9 +476,9 @@ function intersectTags(notebook, tags){
 	var list =[];
 	for(var i = 0; i < tags.length; i++){
 		var tag = tags[i];
-		
+
 		var tagList = notebook.access_database[tag];
-		
+
 		// Check whether the tag has anything yet.
 		if(tagList !== undefined){
 			tagList.forEach(
@@ -468,12 +496,12 @@ function intersectTags(notebook, tags){
 	}
 
 	console.log(count);
-	
+
 	for(prop in count){
 		if(count[prop] === tags.length){
 			list.push(parseInt(prop));
 		}
-	}		
+	}
 	return list;
 }
 
@@ -483,7 +511,7 @@ function parseSearch(notebook, tagString){
 	var tags = [];
 	var type;
 	var searchResults;
-	
+
 	if(tagString.indexOf(tokens.union) >= 0){
 		tags = tagString.split(tokens.union);
 		searchResults = unionTags(notebook, tags);
@@ -495,14 +523,14 @@ function parseSearch(notebook, tagString){
 	else{
 		searchResults = notebook.access_database[tagString];
 	}
-	
+
 	// This is to denote a malformed request.
 	if(searchResults === undefined){
-		return undefined;				
+		return undefined;
 	}
-	
+
 	var returnEntries = [];
-	
+
 	// Actually fetch the entries from the determined indices.
 	for(var i = 0; i < searchResults.length; i++){
 		returnEntries.push(notebook.entries[searchResults[i]]);
@@ -524,7 +552,7 @@ app.get('/search/:name/:tags', function (request, response) {
 			if(entries === undefined){
 				response.send({"success": false});
 			}
-			
+
 			response.send({"results": entries, "success": true});
 		});
 	}

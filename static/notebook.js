@@ -1,7 +1,7 @@
 var g_notebook;
 var g_searchResults;
 var g_parsedName; // notebook name we get from url
-
+var g_parsedQuery;
 
 // Adds a notebook to the database
 function addNotebook(name, callback) {
@@ -43,50 +43,46 @@ var g_notebook;
 var g_parseTokens;
 var g_searchResults;
 
-  //Takes the user to the notebook's url
-  function toNotebook() {
-      var name = $('#notebook-name-input').val()
+//Takes the user to the notebook's url
+function toNotebook() {
+    var name = $('#notebook-name-input').val()
 
-  }
+}
 
 // Gets a notebook from the database
-function getNotebook(name) {
+function getNotebook(name, callback) {
     $.ajax({
         type: "get",
         url: "/load/" + name,
         success: function(data) {
             g_notebook = data.notebook;
-		        //console.log(g_notebook);
+            if(callback !== undefined && typeof(callback) === "function")
+                callback();
 	      }
     });
 }
 
-  // Gets a notebook header from the database
-  function getNotebookHeader(name) {
+// Gets a notebook header from the database
+function getNotebookHeader(name, callback, err_callback) {
     $.ajax({
-      type: "get",
-      url: "/loadHeader/" + name,
-      success: function(data) {
-        g_notebook = data.notebook_header;
-		g_parseTokens = data.parsing_delimeters;
-		console.log(g_notebook);
-	  }
+        type: "get",
+        url: "/loadHeader/" + name,
+        success: function(data) {
+            if(data.success) {
+                g_notebook = data.notebook_header;
+		            g_parseTokens = data.parsing_delimeters;
+                if(callback !== undefined && typeof(callback) === "function")
+                    callback();
+            } else {
+                if (err_callback !== undefined &&
+                    typeof(err_callback) === "function")
+                    err_callback();
+            }
+	      }
     });
-  }  
-  
-  // Gets a notebook from the database
-  function getNotebook(name) {
-    $.ajax({
-      type: "get",
-      url: "/load/" + name,
-      success: function(data) {
-        g_notebook = data.notebook;
-		console.log(g_notebook);
-	  }
-	});
-  }
-		
-		// Add entry with given content, tag name
+}
+
+// Add entry with given content, tag name
 function addEntryWithData(name, link, listOfTags, text, callback){
 	  date = new Date();
 	  if(!name || !listOfTags){
@@ -130,27 +126,29 @@ function upDate(name, entryIndex, dateAccessed) {
 // Remove an entry
 function removeEntry(name, entryIndex) {
     $.ajax({
-      type: "post",
-      data: {"name": name, "entryIndex": entryIndex},
-      url: "/removeEntry",
-      success: function(data) {
-		console.log(data.notebook);
-        //g_notebook = data.notebook;
-      }
+        type: "post",
+        data: {"name": name, "entryIndex": entryIndex},
+        url: "/removeEntry",
+        success: function(data) {
+		        console.log(data.notebook);
+            //g_notebook = data.notebook;
+        }
     });
-  }    
-  
-  // Searches a notebook for a tag
-  // Use g_parseTokens to make search queries properly.
-  // If a malformed request is sent, then it will fail!
-  function searchNotebook(name, tagString) {
+}
+
+// Searches a notebook for a tag
+// Use g_parseTokens to make search queries properly.
+// If a malformed request is sent, then it will fail!
+function searchNotebook(name, tagString, callback) {
     $.ajax({
-      type: "get",
-      url: "/search/" + name + "/" + tagString,
-      success: function(data) {
-		console.log(data.results);
-		g_searchResults = data.results;
-	  }
+        type: "get",
+        url: "/search/" + name + "/" + tagString,
+        success: function(data) {
+		        console.log(data.results);
+		        g_searchResults = data.results;
+            if(callback !== undefined && typeof(callback) === "function")
+                callback()
+	      }
     });
 }
 

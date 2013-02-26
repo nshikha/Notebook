@@ -74,6 +74,7 @@ $(document).ready(function() {
 
 
     var urlSegments = window.location.pathname.split('/');
+    var origin = window.location.origin;
     urlSegments.splice(0,1); // removes "" from the beginning of list
     if(urlSegments[0] === "notebook" && urlSegments.length > 1){
         g_parsedName = urlSegments[1];
@@ -83,4 +84,18 @@ $(document).ready(function() {
 
     //setup submit button
     $("#submit-entry").click(submitEntry);
+
+    //search form
+    $("#go").click(function () {
+        console.log("herp");
+        if($("#search").val() === "") {
+            console.log("everything");
+            window.location = origin + "/notebook/" + g_parsedName +
+                "/all/entries";
+        } else {
+            window.location = origin + "/notebook/" + g_parsedName +
+                "/search/" + $("#search").val();
+        }
+    });
+
 });
