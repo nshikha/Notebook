@@ -68,6 +68,38 @@ function showCreateNotebook() {
     });
 }
 
+/* Code derived from http://onpub.com/index.php?s=7&a=109*/
+// Sorts the entries of a list of entries by the latest dateAccessed,
+// Least recent first.
+function sortEntriesLRU(entries){
+	// Comparison function for sort
+	var date_sort_asc = function (entry1, entry2) {
+		var date1 = entry1.dateAccessed;
+		var date2 = entry2.dateAccessed;
+		if (date1 > date2) return 1;
+		if (date1 < date2) return -1;
+		return 0;
+	};
+
+	entries.sort(date_sort_asc);	
+}
+
+/* Code derived from http://onpub.com/index.php?s=7&a=109*/
+// Sorts the entries of a list of entries by the dateAccessed,
+// Most Recent First.
+function sortEntriesMRU(entries){
+	// Comparison function for sort
+	var date_sort_desc = function (entry1, entry2) {
+		var date1 = entry1.dateAccessed;
+		var date2 = entry2.dateAccessed;
+		if (date1 > date2) return -1;
+		if (date1 < date2) return 1;
+		return 0;
+	};
+
+	entries.sort(date_sort_desc);	
+}
+
 $(document).ready(function() {
 	  console.log("Some functions: ");
 	  console.log("getNotebooks(), addNotebook(name), getNotebook(name), addEntryWithData(name, content, listOfTags), removeEntry(name, entryIndex), upDate(name, entryIndex, dateAccessed), checkNotebook(notebook), searchNotebook(name, tag)");
