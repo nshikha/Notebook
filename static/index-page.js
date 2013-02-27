@@ -18,10 +18,13 @@ $(document).ready(function() {
 	  console.log("Some functions: ");
 	  console.log("getNotebooks(), addNotebook(name), getNotebook(name), addEntryWithData(name, content, listOfTags), removeEntry(name, entryIndex), upDate(name, entryIndex, dateAccessed), checkNotebook(notebook), searchNotebook(name, tag)");
 
+
     $('#go').click(function() {
         toNotebook();
     });
-    $('#cover form').submit(function() {
-        toNotebook();
+
+    $("#search").keypress(function(event) {
+        if(event.keyCode === 13) //hit enter
+            search();
     });
 });
