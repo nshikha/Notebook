@@ -51,16 +51,14 @@ img {
   position: relative;
 }
 
-#entries {
-  background: #e18728;
-}
 .entry {
   background: white;
   padding: 10px;
   display: block;
   margin: 0 auto;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   width: 500px;
+  box-shadow: inset 0 0 4px 1px #cecccc;
   border-bottom: 2px solid rgb(223, 217, 217);
   position: relative;
 }
@@ -69,22 +67,44 @@ img {
 .entry span {
   font-size: 12px;
   position: absolute;
-  right: 5px;
-  top: 5px;
-
+  right: 8px;
+  top: 8px;
+  padding:5px;
 }
 
-.entry h3, p {
+.entry h3, p, .operations {
+  padding: 10px;
   margin: 10px 0px;
 }
 
-.entry h3 {
-  margin-top: 15px;
+.entry h3 a {
+  color: #859ce6;
+  margin-top: 20px;
+}
+
+.entry h3 a:hover, .edit:hover, .delete:hover {
+  color: #0050bf;
 }
 
 .entry p.tags {
   margin: 10px 0px;
 }
+
+.entry .operations {
+  border-top: 2px solid rgb(223, 217, 217);;
+}
+
+.edit, .delete {
+  color: #859ce6;
+  font-size: 16px;
+}
+
+.delete {
+  margin-left: 10px;
+}
+
+
+
 
 #link, #tag {
   background-color: inherit;
