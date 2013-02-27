@@ -220,13 +220,12 @@ function generateEntries(entries) {
         entries.forEach(function (e) {
             var link, tags, text;
             if(e.content === undefined || e.content === "") {
-                link = $("<h3>").html("Note:");
                 text = $("<p>").html($("<pre>").html(e.desc));
             } else {
                 link = $("<h3>").html($('<a href="'+e.content+'">')
                                       .html(e.content));
             }
-            var tags = $('<p class="tags">').html(String(e.tags));
+            var tags = $('<p class="tags">').html(e.tags.join(" | ");
             var date = $("<span>").html(e.dateAdded)
             var edit = $('<a href="#" class="edit">edit</a>').click(function () {
                 editEntryDialog(e);
@@ -238,7 +237,7 @@ function generateEntries(entries) {
             entry.append(link, date, tags);
             if(text !== undefined)
                 entry.append(text);
-            entry.append(edit, del);
+            entry.append($('<div class="operations">').append(edit, del));
 
             if(!entry.deleted)
                 $("#entries").append(entry);
