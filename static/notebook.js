@@ -6,15 +6,21 @@ var g_searchQuery; // {type: "union", tags: [...]}
 
 // Adds a notebook to the database
 // 'status' field indicates 'created', 'existing', or 'invalid'
-function addNotebook(name, callback) {
+function addNotebook(name, callback, err_callback) {
     $.ajax({
         type: "post",
         data: {"name": name, "dateCreated": new Date()},
         url: "/create",
         success: function(data) {
-            g_notebook = data.notebook;
-            if(callback !== undefined && typeof(callback) === "function")
-                callback();
+            if(data.success) {
+                g_notebook = data.notebook;
+                if(callback !== undefined && typeof(callback) === "function")
+                    callback();
+            } else {
+                if(err_callback !== undefined &&
+                   typeof(err_callback) === "function")
+                    err_callback(data.status);
+            }
         }
     });
 }
@@ -58,6 +64,20 @@ function getNotebook(name, callback) {
         url: "/load/" + name,
         success: function(data) {
             g_notebook = data.notebook;
+            if(callback !== undefined && typeof(callback) === "function")
+                callback();
+	      }
+    });
+}
+
+// Gets a list of non-deleted entries from notebook
+function getEntries(name, callback) {
+    $.ajax({
+        type: "get",
+        url: "/loadEntries/" + name,
+        success: function(data) {
+            g_searchResults = data.entries;
+            g_searchResults.all = true;
             if(callback !== undefined && typeof(callback) === "function")
                 callback();
 	      }
@@ -227,11 +247,11 @@ function validNotebookName(name){
 	if(name === "notebooks"){
 		return false;
 	}
-	
-	if(name.indexOf(" ") >= 0){		
+
+	if(name.indexOf(" ") >= 0){
 		return false;
 	}
-	
+
 	// Check if alphanumeric notebook name
 	// stackoverflow.com
     if( /[^a-zA-Z0-9]/.test(name) ) {
@@ -247,11 +267,11 @@ function validTagName(name){
 	if(typeof(name) !== "string"){
 		return false;
 	}
-	
-	if(name.indexOf(" ") >= 0){		
+
+	if(name.indexOf(" ") >= 0){
 		return false;
 	}
-	
+
 	// Check if alphanumeric notebook name
 	// stackoverflow.com
     if( /[^a-zA-Z0-9]/.test(name) ) {

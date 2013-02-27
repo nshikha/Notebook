@@ -177,7 +177,6 @@ function existingNotebookName(name){
 	// Checks if the notebook already exists.
 	var inList = g_notebookList.indexOf(name);
 	if(inList >= 0){
-		console.log("Notebook " + name + " already exists!");
 		return true;
 	}
 
@@ -222,26 +221,6 @@ app.get("/notebook/:name", function (request, response) {
         response.sendfile("static/notebook.html");
     } else {
         response.sendfile("static/" + request.params.name);
-    }
-});
-
-app.get("/notebook/:name/all/:herp", function(request, response) {
-    var name = request.params.name
-    var herp = request.params.herp;
-    if(existingNotebookName(name) && !staticFile(herp)) {
-        response.sendfile("static/search.html");
-    } else {
-        response.sendfile("static/" + request.params.herp);
-    }
-});
-
-app.get("/notebook/:name/search/:query", function (request, response) {
-    var name = request.params.name;
-    var query = request.params.query;
-    if(existingNotebookName(name) && !staticFile(query)) {
-        response.sendfile("static/search.html");
-    } else {
-        response.sendfile("static/" + request.params.query);
     }
 });
 
@@ -318,7 +297,7 @@ function deleteEntryTags(notebook, index){
 	for(var i = 0; i < oldEntry.tags.length; i++){
 		var tag = oldEntry.tags[i];
 		var accessDBList = notebook.access_database[tag];
-		
+
 		console.log("types: " + typeof(index) + typeof(accessDBList[0]))
 		console.log("Removing Index: " + index);
 		console.log("Located at: " + accessDBList.indexOf(index));
@@ -326,7 +305,7 @@ function deleteEntryTags(notebook, index){
 		// use this (removes the index from tag list)
 		accessDBList.splice(accessDBList.indexOf(index), 1);
 		console.log(accessDBList);
-		
+
 		// Remove this tag from the database if the database is empty.
 		if(accessDBList.length === 0){
 			delete notebook.access_database[tag];
@@ -342,7 +321,7 @@ app.post('/removeEntry', function (request, response) {
 	if(typeof(index) === "string"){
 		index = parseInt(index);
 	}
-	
+
 	// Checks if the notebook name already exists and if its well-formed
 	if(!existingNotebookName(name)){
 		console.log("Removes entry from non-existent notebook.");
@@ -351,14 +330,14 @@ app.post('/removeEntry', function (request, response) {
 	else{
 		readFile(getDBFilename(name), {}, function(err, data) {
 			notebook = JSON.parse(data);
-			
+
 			if(index >= notebook.entries.length){
 				response.send({"success": false});
 			}
 			else{
 				var entry = notebook.entries[index];
 				entry.deleted = true;
-				
+
 				// Remove associated tags from access_database
 				deleteEntryTags(notebook, entry.index);
 
@@ -492,6 +471,27 @@ app.get('/load/:name', function (request, response) {
 			// Send back the header for the notebook, but not the entries
 			//response.send(getNotebookHeader(notebook));
 			response.send({"notebook": notebook, "success": true});
+		});
+	}
+	else{
+		response.send({"success": false});
+	}
+});
+
+// Sends back a list of all of the entries.
+app.get('/loadEntries/:name', function (request, response) {
+	var name = request.params.name;
+	var notebook;
+
+	if(existingNotebookName(name)){
+		readFile(getDBFilename(name), {}, function(err, data) {
+			notebook = JSON.parse(data);
+
+			var validEntries = notebook.entries.filter(function(elem){
+				return !elem.deleted;
+			});
+
+			response.send({"entries": validEntries, "success": true});
 		});
 	}
 	else{
@@ -634,7 +634,7 @@ app.get('/search/:name/:tags', function (request, response) {
 
 function checkAllNotebooks(){
 	var notebookList = g_notebookList;
-	
+
 	for(var i = 0; i < notebookList.length; i++){
 		var name = notebookList[i];
 		readFile(getDBFilename(name), {}, function(err, data) {
@@ -687,7 +687,7 @@ function generateAccessDatabase(notebook){
 	}
 	printAccessDatabase(notebook.access_database);
 	printAccessDatabase(new_access);
-	
+
 	notebook.access_database = new_access;
 }
 
