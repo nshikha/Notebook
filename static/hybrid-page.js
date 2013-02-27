@@ -225,7 +225,7 @@ function generateEntries(entries) {
                 link = $("<h3>").html($('<a href="'+e.content+'">')
                                       .html(e.content));
             }
-            var tags = $('<p class="tags">').html(e.tags.join(" | ");
+            var tags = $('<p class="tags">').html(e.tags.join(" | "));
             var date = $("<span>").html(e.dateAdded)
             var edit = $('<a href="#" class="edit">edit</a>').click(function () {
                 editEntryDialog(e);
