@@ -1,13 +1,17 @@
+function flash_message(info, cls, msgs) {
+    info.html("");
+    info.removeClass();
+    msgs.forEach(function (e) {
+        info.append($('<p>').html(e));
+    });
+    info.addClass(cls);
+}
+
 function openNotebook() {
     var notebookName = $("#open").val();
     var info = $("#open-info");
     if(notebookName === "") {
-        info.append($('<p>').html("Please enter a notebook name"));
-        info.addClass("error");
-        window.setTimeout(function() {
-            info.html("");
-            info.removeClass("error");
-        }, 1500);
+        flash_message(info, "error", ["Please enter a notebook name"]);
     } else {
         getNotebookHeader(
             notebookName,
@@ -15,13 +19,32 @@ function openNotebook() {
                 var origin = window.location.origin;
                 window.location = origin+"/notebook/"+notebookName;
             }, function() {
-                info.append($('<p>').html("That notebook doesn't exist!"));
-                info.addClass("error");
-                window.setTimeout(function() {
-                    info.html("");
-                    info.removeClass("error");
-                }, 1500);
+                flash_message(info, "error", ["That notebook doesn't exist"]);
             });
+    }
+}
+
+
+function createNotebook() {
+    var notebookName = $("#new").val();
+    var info = $("#new-info");
+
+    if(notebookName === "") {
+        flash_message(info, "error", ["Please enter a notebook name"]);
+    } else {
+        addNotebook(notebookName, function() {
+            var origin = window.location.origin;
+            window.location = origin+"/notebook/"+notebookName;
+        }, function(err_message) {
+            var msg = "";
+            if (err_message === "existing") {
+                msg = "This notebook already exists!";
+            } else {
+                msg = "This notebook name is invalid";
+            }
+            flash_message(info, "error", [msg]);
+        });
+
     }
 }
 
@@ -30,12 +53,7 @@ function toNotebook() {
     var notebookName = $("#name").val();
     var info = $("#information");
     if(notebookName === "") {
-        info.append($('<p>').html("Please enter a notebook name"));
-        info.addClass("error");
-        window.setTimeout(function() {
-            info.html("");
-            info.removeClass("error");
-        }, 2000);
+        flash_message(info, "error", ["Please enter a notebook name"]);
     } else {
         var origin = window.location.origin;
         window.location = origin+"/notebook/"+notebookName;
