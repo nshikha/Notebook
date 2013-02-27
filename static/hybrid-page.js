@@ -225,7 +225,8 @@ function generateEntries(entries) {
                 link = $("<h3>").html($('<a href="'+e.content+'">')
                                       .html(e.content));
             }
-            var tags = $('<p class="tags">').html(e.tags.join(" | "));
+            var prepareTags = e.tags.map(function(s) { return "#"+s;});
+            var tags = $('<p class="tags">').html(prepareTags.join(" | "));
             var date = $("<span>").html(e.dateAdded)
             var edit = $('<a href="#" class="edit">edit</a>').click(function () {
                 editEntryDialog(e);
@@ -234,64 +235,49 @@ function generateEntries(entries) {
                 delEntryDialog(e);
             });
             var entry = $('<div class="entry">');
-            entry.append(link, date, tags);
+            entry.append(link, date);
             if(text !== undefined)
                 entry.append(text);
+            entry.append(tags);
             entry.append($('<div class="operations">').append(edit, del));
 
             if(!entry.deleted)
                 $("#entries").append(entry);
         });
     }
-    console.log("yay");
+    console.log(entries);
 }
 
-
-/* Code derived from http://onpub.com/index.php?s=7&a=109*/
-// Sorts the entries of a list of entries by the latest dateAccessed,
-// Least recent first.
-function sortEntriesLRU(entries){
-	// Comparison function for sort
-	var date_sort_asc = function (entry1, entry2) {
-		var date1 = entry1.dateAccessed;
-		var date2 = entry2.dateAccessed;
-		if (date1 > date2) return 1;
-		if (date1 < date2) return -1;
-		return 0;
-	};
-
-	entries.sort(date_sort_asc);
-}
 
 /* Code derived from http://onpub.com/index.php?s=7&a=109*/
 // Sorts the entries of a list of entries by the date created,
 // Oldest first.
 function sortEntriesOldest(entries){
 	// Comparison function for sort
-	var date_sort_asc = function (entry1, entry2) {
-		var date1 = entry1.dateAccessed;
-		var date2 = entry2.dateAccessed;
+	var date_sort = function (entry1, entry2) {
+		var date1 = Date.parse(entry1.dateAdded);
+		var date2 = Date.parse(entry2.dateAdded);
 		if (date1 > date2) return 1;
 		if (date1 < date2) return -1;
 		return 0;
 	};
-
-	entries.sort(date_sort_asc);
+  console.log("sort oldest!");
+	entries.sort(date_sort);
 }
 /* Code derived from http://onpub.com/index.php?s=7&a=109*/
 // Sorts the entries of a list of entries by the date created,
 // Newest first.
 function sortEntriesNewest(entries){
 	// Comparison function for sort
-	var date_sort_asc = function (entry1, entry2) {
-		var date1 = entry1.dateAccessed;
-		var date2 = entry2.dateAccessed;
+	var date_sort = function (entry1, entry2) {
+		var date1 = Date.parse(entry1.dateAdded);
+		var date2 = Date.parse(entry2.dateAdded);
 		if (date1 > date2) return -1;
 		if (date1 < date2) return 1;
 		return 0;
 	};
-
-	entries.sort(date_sort_asc);
+  console.log("sort newest");
+	entries.sort(date_sort);
 }
 
 /* Code derived from http://onpub.com/index.php?s=7&a=109*/
@@ -300,13 +286,13 @@ function sortEntriesNewest(entries){
 function sortEntriesMRU(entries){
 	// Comparison function for sort
 	var date_sort_desc = function (entry1, entry2) {
-		var date1 = entry1.dateAccessed;
-		var date2 = entry2.dateAccessed;
+		var date1 = Date.parse(entry1.dateAccessed);
+		var date2 = Date.parse(entry2.dateAccessed);
 		if (date1 > date2) return -1;
 		if (date1 < date2) return 1;
 		return 0;
 	};
-
+  console.log("sort mru");
 	entries.sort(date_sort_desc);
 }
 
@@ -377,14 +363,14 @@ $(document).ready(function() {
 
     $("#sort-oldest").click(function() {
         $(".selected").removeClass("selected");
-        $("#sort-accessed").addClass("selected");
+        $("#sort-oldest").addClass("selected");
         sortEntriesOldest(g_searchResults);
         generateEntries(g_searchResults);
     });
 
     $("#sort-newest").click(function() {
         $(".selected").removeClass("selected");
-        $("#sort-accessed").addClass("selected");
+        $("#sort-newest").addClass("selected");
         sortEntriesNewest(g_searchResults);
         generateEntries(g_searchResults);
     });
