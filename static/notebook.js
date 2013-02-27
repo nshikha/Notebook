@@ -106,7 +106,7 @@ function addEntry(name, entry, callback) {
 		        console.log(data.notebook);
             if(callback !== undefined && typeof(callback) === "function")
                 callback();
-            //g_notebook = data.notebook;
+            //g_notebook = data.notebook;;
         }
     });
 }

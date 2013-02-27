@@ -81,6 +81,7 @@ function initServer() {
   var defaultList = "[]";
   readFile(getDBFilename("notebooks"), defaultList, function(err, data) {
 	g_notebookList = JSON.parse(data);
+	checkAllNotebooks();
   });
   //get list of static files
   fs.readdir("static/", function(err, files) {
@@ -217,7 +218,6 @@ app.get("/static/:staticFilename", function (request, response) {
 // This route is hit when a specific notebook is requested
 app.get("/notebook/:name", function (request, response) {
     var name = request.params.name
-    console.log(name);
     if(existingNotebookName(name) || !staticFile(name)) {
         response.sendfile("static/search-add-hybrid.html");
     } else {
@@ -273,13 +273,11 @@ app.post('/upDate', function (request, response) {
 	var dateAccessed = request.body.dateAccessed;
 
 	if(!existingNotebookName(name)){
-		console.log("Removes entry from non-existent entry.");
 		response.send({"success": false});
 	}
 	else{
 		readFile(getDBFilename(name), {}, function(err, data) {
 			notebook = JSON.parse(data);
-			console.log(notebook);
 
 			if(index >= notebook.entries.length){
 				response.send({"status": "invalid", "success": false});
@@ -320,9 +318,15 @@ function deleteEntryTags(notebook, index){
 	for(var i = 0; i < oldEntry.tags.length; i++){
 		var tag = oldEntry.tags[i];
 		var accessDBList = notebook.access_database[tag];
+		
+		console.log("types: " + typeof(index) + typeof(accessDBList[0]))
+		console.log("Removing Index: " + index);
+		console.log("Located at: " + accessDBList.indexOf(index));
+		console.log(accessDBList);
 		// use this (removes the index from tag list)
 		accessDBList.splice(accessDBList.indexOf(index), 1);
-
+		console.log(accessDBList);
+		
 		// Remove this tag from the database if the database is empty.
 		if(accessDBList.length === 0){
 			delete notebook.access_database[tag];
@@ -335,32 +339,34 @@ app.post('/removeEntry', function (request, response) {
 	var name = 	request.body.name;
 	var index = request.body.entryIndex;
 
+	if(typeof(index) === "string"){
+		index = parseInt(index);
+	}
+	
 	// Checks if the notebook name already exists and if its well-formed
 	if(!existingNotebookName(name)){
-		console.log("Removes entry from non-existent entry.");
+		console.log("Removes entry from non-existent notebook.");
 		response.send({"success": false});
 	}
 	else{
 		readFile(getDBFilename(name), {}, function(err, data) {
 			notebook = JSON.parse(data);
-			console.log(notebook);
-
+			
 			if(index >= notebook.entries.length){
 				response.send({"success": false});
 			}
 			else{
 				var entry = notebook.entries[index];
 				entry.deleted = true;
+				
 				// Remove associated tags from access_database
-				deleteEntryTags(notebook, index);
+				deleteEntryTags(notebook, entry.index);
 
 				// Persist changes to notebook
 				writeNotebookToFile(notebook);
 
 				// Send back the updated notebook
-				response.send({"notebook": notebook,
-							   "success": true
-						  });
+				response.send({"success": true});
 			}
 
 		});
@@ -374,13 +380,12 @@ app.post('/editEntry', function (request, response) {
 
 	// Checks if the notebook name already exists and if its well-formed
 	if(!validNotebookName(name) || !existingNotebookName(name) || !validNotebookEntry(entry)){
-		console.log("Something went wrong");
+		console.log("editEntry: Invalid notebook name or entry");
 		response.send({"success": false});
 	}
 	else{
 		readFile(getDBFilename(name), {}, function(err, data) {
 			notebook = JSON.parse(data);
-			console.log(notebook);
 
 			var index = entry.index;
 
@@ -418,13 +423,12 @@ app.post('/addEntry', function (request, response) {
 
 	// Checks if the notebook name already exists and if its well-formed
 	if(!validNotebookName(name) || !existingNotebookName(name) || !validNotebookEntry(entry)){
-		console.log("Something went wrong");
+		console.log("addEntry: Invalid notebook name or entry");
 		response.send({"success": false});
 	}
 	else{
 		readFile(getDBFilename(name), {}, function(err, data) {
 			notebook = JSON.parse(data);
-			console.log(notebook);
 
 			var index = notebook.entries.length;
 
@@ -466,7 +470,6 @@ app.get('/loadHeader/:name', function (request, response) {
 	if(existingNotebookName(name)){
 		readFile(getDBFilename(name), {}, function(err, data) {
 			notebook = JSON.parse(data);
-			console.log(notebook);
 
 			// Send back the header for the notebook, but not the entries
 			response.send(getNotebookHeader(notebook));
@@ -485,7 +488,6 @@ app.get('/load/:name', function (request, response) {
 	if(existingNotebookName(name)){
 		readFile(getDBFilename(name), {}, function(err, data) {
 			notebook = JSON.parse(data);
-			console.log(notebook);
 
 			// Send back the header for the notebook, but not the entries
 			//response.send(getNotebookHeader(notebook));
@@ -563,8 +565,6 @@ function intersectTags(notebook, tags){
 		}
 	}
 
-	console.log(count);
-
 	for(prop in count){
 		if(count[prop] === tags.length){
 			list.push(parseInt(prop));
@@ -632,6 +632,40 @@ app.get('/search/:name/:tags', function (request, response) {
 // ---------------------------------------------------------------------
 // Some basic checks to make sure our database stays sanitary
 
+function checkAllNotebooks(){
+	var notebookList = g_notebookList;
+	
+	for(var i = 0; i < notebookList.length; i++){
+		var name = notebookList[i];
+		readFile(getDBFilename(name), {}, function(err, data) {
+			var notebook = JSON.parse(data);
+
+			if(!checkAccessDatabase(notebook)){
+			}
+		});
+
+		console.log("Done checking notebooks.");
+	}
+}
+
+function checkAccessDatabase(notebook){
+	var entries = notebook.entries;
+	for(var prop in notebook.access_database){
+		var arr = notebook.access_database[prop];
+		for(var i = 0; i < arr.length; i++){
+			if(entries[arr[i]].deleted === true){
+				console.log("Malformed notebook:" + notebook.name);
+				console.log("Property: " +  prop + " : " + i);
+				printEntrySummary(notebook.entries);
+				generateAccessDatabase(notebook);
+				writeNotebookToFile(notebook);
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 function generateAccessDatabase(notebook){
 	var new_access = {};
 	for(j = 0; j < notebook.entries.length; j++){
@@ -651,11 +685,28 @@ function generateAccessDatabase(notebook){
 			}
 		}
 	}
-
+	printAccessDatabase(notebook.access_database);
+	printAccessDatabase(new_access);
+	
 	notebook.access_database = new_access;
 }
 
+function printEntrySummary(entries){
+	console.log("Entries: ");
+	for(var i = 0; i < entries.length; i++){
+		var entry = entries[i];
+		console.log(i + " : " + entry.deleted + " : " + "tags: " + entry.tags);
+	}
+}
 
+function printAccessDatabase(accessDB){
+	console.log("Access")
+	for(var prop in accessDB){
+		var arr = accessDB[prop];
+		console.log(prop + " : " + arr);
+	}
+	return true;
+}
 
 // Finally, initialize the server, then activate the server at port 8889
 initServer();
