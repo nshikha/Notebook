@@ -145,6 +145,7 @@ function addToNotebookList(name){
 		JSON.stringify(g_notebookList));
 }
 
+
 // Checks if the submitted notebook name is valid
 // TODO: check if notebook name is well-formed
 function validNotebookName(name){
@@ -155,6 +156,16 @@ function validNotebookName(name){
 	if(name === "notebooks"){
 		return false;
 	}
+	
+	if(name.indexOf(" ") >= 0){		
+		return false;
+	}
+	
+	// Check if alphanumeric notebook name
+	// stackoverflow.com
+    if( /[^a-zA-Z0-9]/.test(name) ) {
+       return false;
+    }
 
 	return true;
 }
@@ -162,10 +173,6 @@ function validNotebookName(name){
 // Checks if the submitted notebook name is valid
 // TODO: check if notebook name is well-formed
 function existingNotebookName(name){
-	if(typeof(name) != 'string'){
-		return false;
-	}
-
 	// Checks if the notebook already exists.
 	var inList = g_notebookList.indexOf(name);
 	if(inList >= 0){
@@ -183,7 +190,6 @@ function staticFile(name) {
     else return true;
 
 }
-
 
 // Given the name of a file, returns filepath string.
 function getDBFilename(name){
@@ -219,7 +225,6 @@ app.get("/notebook/:name", function (request, response) {
     }
 });
 
-
 app.get("/notebook/:name/all/:herp", function(request, response) {
     var name = request.params.name
     var herp = request.params.herp;
@@ -244,14 +249,18 @@ app.get("/notebook/:name/search/:query", function (request, response) {
 app.post('/create', function (request, response) {
 	var name = 	request.body.name;
 	var date = request.body.dateCreated;
-
+	
 	// Checks if the notebook name already exists and if its well-formed and that a date is provided
-	if(!validNotebookName(name) || existingNotebookName(name) || !date){
-		response.send({"success": false});
+	if(!validNotebookName(name)){
+		response.send({"status": "invalid","success": false});		
+	}
+	else if(existingNotebookName(name)){
+		response.send({"status": "existing", "success": false});		
 	}
 	else{
 		var notebook = initNotebook(name, date);
 		response.send({"notebook": notebook,
+						"status": "created",
 					   "success": true
 					  });
 	}
@@ -273,7 +282,7 @@ app.post('/upDate', function (request, response) {
 			console.log(notebook);
 
 			if(index >= notebook.entries.length){
-				response.send({"success": false});
+				response.send({"status": "invalid", "success": false});
 			}
 
 			notebook.entries[index].dateAccessed = dateAccessed;
@@ -435,6 +444,7 @@ app.post('/addEntry', function (request, response) {
 			// Send back the formatted databaseEntry
 			response.send({"notebook": notebook,
 							"entry" : dbEntry,
+							"status": "",
 						   "success": true
 					  });
 		});

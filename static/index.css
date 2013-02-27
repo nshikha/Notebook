@@ -1,15 +1,20 @@
 
 /*background: #f7f4f4; */
 .cover {
+	overflow: hidden;
 	padding: 5px;
-	background-color: #f9f9f9;
+	background-color: white;
 	box-shadow: inset 0 0 12px 1px #696969;
 	-moz-box-shadow: inset 0 0 12px 1px #696969;
 	-webkit-box-shadow: inset 0 0 12px 1px #696969;
-	height: 100%;
-	width: 80%;
+	min-height: 600px;
+	width: 800px;
 	text-align: center;
 	margin: 0 auto; 
+}
+
+img {
+	margin: 4px;
 }
 
 /* my notebook headline */
@@ -21,33 +26,45 @@
 	color: #2c353d;
 	text-shadow: 0px 1px 2px #fff;
 }
-/*
-canvas {
-	background-color: #c9163f;
-	float: left;
-	margin-left: 15%;
-	width: 10px;
-	height: 100%;
-	box-shadow: 1px 1px 1px 1px #696969;
-}
 
-/* #1e282e - darker blue */
-/* background: #143b51; */
+
 body {
-	background-color: #BF4C40;
-	font-family: 'GFS Didot', serif;
+	background-image: -webkit-gradient(radial, center top, 0, center top, 425, color-stop(0, #52A1D9), color-stop(1, #0050BF));
+	background-image: -moz-radial-gradient(center top, circle closest-corner, #52A1D9 0%, #0050BF 100%);
+	background-image: -webkit-radial-gradient(center top, circle closest-corner, #52A1D9 0%, #0050BF 100%);
 	text-align: center;
+	font-family: 'Helvetica Nueue', Helvetica;
+	color: #9c9c9c;
 }
 
-form {
+
+label {
 	display: block;
-	margin: 0 auto;
-	margin-top: 140px;
-	width: 300px;
+	margin: 20px;
 }
+
+#olduser, #newuser {
+	display: inline-block;
+	margin-top: 60px;
+	padding-top: 40px;
+	height: 300px;
+	width: 390px;
+}
+
+
+#olduser {
+	float: left;
+}
+
+#newuser {
+	float: right;
+	border-left: 1px solid #c3c7cc;
+}
+
+
 
 #name {
-	margin: 2px;
+	margin: 0 auto;
 	width: 220px;
 	height: 40px;
 	font-size: 20px;
@@ -77,32 +94,46 @@ input::-webkit-input-placeholder,::-moz-input-placeholder {
   margin: 6px;
 }
 
-#go {
+
+button {
+	display: block;
 	border-radius: 3px;
 	color: white;
 	font-size: 16px;
 	border: 0px;
-	margin-left: 10px;
-	width: 40px;
-	height: 39px;
+	margin-left: 130px;
+	margin-top: 50px;
+	vertical-align: middle;
+	text-align: center;
 	background-color: #5f95ea;
 	text-shadow: 1px 1px 1px #000;
 	box-shadow: 0 0 3px #696;
+	width: 50px;
+	height: 40px;
 }
 
-#go:hover{
+#create {
+	width: 100px;
+	margin-right: 180px;
+	text-align: center;
+}
+
+
+
+button:hover{
 	box-shadow: 1px 1px 2px 1px #636363;
 }
 
-#go:active{
+button:active{
   	-webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.05);
   	-moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.05);
   	box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
+
 footer {
 	position: absolute;
-	bottom: 8px;
+	bottom: 1px;
 	height: 20px;
 	margin: 0 auto;
 	width: 80%;

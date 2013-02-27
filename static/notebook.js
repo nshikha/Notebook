@@ -5,6 +5,7 @@ var g_parsedName; // notebook name we get from url
 var g_searchQuery; // {type: "union", tags: [...]}
 
 // Adds a notebook to the database
+// 'status' field indicates 'created', 'existing', or 'invalid'
 function addNotebook(name, callback) {
     $.ajax({
         type: "post",
@@ -214,4 +215,48 @@ function checkNotebook(notebook){
 	  }
 
 	  console.log("checkNotebook: success");
+}
+
+// Checks if the submitted notebook name is valid
+// TODO: check if notebook name is well-formed
+function validNotebookName(name){
+	if(typeof(name) !== "string"){
+		return false;
+	}
+
+	if(name === "notebooks"){
+		return false;
+	}
+	
+	if(name.indexOf(" ") >= 0){		
+		return false;
+	}
+	
+	// Check if alphanumeric notebook name
+	// stackoverflow.com
+    if( /[^a-zA-Z0-9]/.test(name) ) {
+       return false;
+    }
+
+	return true;
+}
+
+// Checks if the submitted notebook name is valid
+// TODO: check if notebook name is well-formed
+function validTagName(name){
+	if(typeof(name) !== "string"){
+		return false;
+	}
+	
+	if(name.indexOf(" ") >= 0){		
+		return false;
+	}
+	
+	// Check if alphanumeric notebook name
+	// stackoverflow.com
+    if( /[^a-zA-Z0-9]/.test(name) ) {
+       return false;
+    }
+
+	return true;
 }
