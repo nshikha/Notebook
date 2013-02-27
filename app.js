@@ -213,7 +213,7 @@ app.get("/notebook/:name", function (request, response) {
     var name = request.params.name
     console.log(name);
     if(existingNotebookName(name) || !staticFile(name)) {
-        response.sendfile("static/notebook.html");
+        response.sendfile("static/search-add-hybrid.html");
     } else {
         response.sendfile("static/" + request.params.name);
     }
@@ -342,7 +342,6 @@ app.post('/removeEntry', function (request, response) {
 			else{
 				var entry = notebook.entries[index];
 				entry.deleted = true;
-
 				// Remove associated tags from access_database
 				deleteEntryTags(notebook, index);
 
@@ -508,7 +507,7 @@ The "reserved" syntax class above refers to those characters that are allowed
 function getParseTokens(){
 	return {
 		'union' : "+",
-		'intersection' : "^"
+		'intersection' : "^^"
 	};
 }
 

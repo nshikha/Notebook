@@ -1,7 +1,8 @@
 var g_notebook;
 var g_searchResults;
+var g_parseTokens;
 var g_parsedName; // notebook name we get from url
-var g_parsedQuery;
+var g_searchQuery; // {type: "union", tags: [...]}
 
 // Adds a notebook to the database
 function addNotebook(name, callback) {
@@ -38,10 +39,10 @@ function getNotebookHeader(name, callback, err_callback) {
     });
 }
 
-//----------------------------------------
-var g_notebook;
-var g_parseTokens;
-var g_searchResults;
+
+
+
+
 
 //Takes the user to the notebook's url
 function toNotebook() {
@@ -110,6 +111,7 @@ function addEntry(name, entry, callback) {
 }
 
 // Edits an entry in the the database
+// entry has index, link, list of tags, text, dateCreated, new dateAccessed
 function editEntry(name, newEntry, callback) {
 	newEntry.dateAccessed = new Date();
     $.ajax({
@@ -140,14 +142,15 @@ function upDate(name, entryIndex, dateAccessed) {
 }
 
 // Remove an entry
-function removeEntry(name, entryIndex) {
+function removeEntry(name, entryIndex, callback) {
     $.ajax({
         type: "post",
         data: {"name": name, "entryIndex": entryIndex},
         url: "/removeEntry",
         success: function(data) {
 		        console.log(data.notebook);
-            //g_notebook = data.notebook;
+            if(callback !== undefined && typeof(callback) === "function")
+                callback();
         }
     });
 }
@@ -163,7 +166,7 @@ function searchNotebook(name, tagString, callback) {
 		        console.log(data.results);
 		        g_searchResults = data.results;
             if(callback !== undefined && typeof(callback) === "function")
-                callback()
+                callback();
 	      }
     });
 }
