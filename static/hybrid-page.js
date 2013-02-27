@@ -244,6 +244,9 @@ function generateEntries(entries) {
             if(!entry.deleted)
                 $("#entries").append(entry);
         });
+    } else {
+        $("#entries").append($('<p class="no-entry-msg">').html("No entries found."),
+                             $('<p class="hint">').html("Hint: Searching with no tags returns all entries"));
     }
     console.log(entries);
 }
@@ -317,6 +320,7 @@ $(document).ready(function() {
         console.log("getting notebook: " + g_parsedName);
         getNotebookHeader(g_parsedName, displayNotebookName);
     }
+    generateEntries(); // show no entries found
 
     //setup submit button
     addLinkE.keypress(function(event) {

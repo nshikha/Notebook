@@ -319,6 +319,17 @@ button:hover{
 #entries {
     text-align: left;
     font-size: 16px;
+    margin-top: 40px;
+}
+
+#entries .no-entry-msg {
+    text-align: center;
+    font-size: 18px;
+}
+
+#entries .hint {
+    text-align: center;
+    font-size: 16px;
 }
 
 footer {
@@ -351,6 +362,9 @@ footer {
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
+#sort-by a.selected {
+    text-decoration: underline;
+}
 
 #sort-by a {
   display: inline-block;
@@ -369,4 +383,3 @@ footer {
   text-decoration: none;
 
 }
-
