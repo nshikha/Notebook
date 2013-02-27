@@ -177,7 +177,6 @@ function existingNotebookName(name){
 	// Checks if the notebook already exists.
 	var inList = g_notebookList.indexOf(name);
 	if(inList >= 0){
-		console.log("Notebook " + name + " already exists!");
 		return true;
 	}
 
@@ -255,6 +254,7 @@ app.post('/create', function (request, response) {
 		response.send({"status": "invalid","success": false});		
 	}
 	else if(existingNotebookName(name)){
+		console.log("Notebook " + name + " already exists!");
 		response.send({"status": "existing", "success": false});		
 	}
 	else{
@@ -492,6 +492,27 @@ app.get('/load/:name', function (request, response) {
 			// Send back the header for the notebook, but not the entries
 			//response.send(getNotebookHeader(notebook));
 			response.send({"notebook": notebook, "success": true});
+		});
+	}
+	else{
+		response.send({"success": false});
+	}
+});
+
+// Sends back a list of all of the entries.
+app.get('/loadEntries/:name', function (request, response) {
+	var name = request.params.name;
+	var notebook;
+
+	if(existingNotebookName(name)){
+		readFile(getDBFilename(name), {}, function(err, data) {
+			notebook = JSON.parse(data);
+
+			var validEntries = notebook.entries.filter(function(elem){
+				return !elem.deleted;
+			});
+			
+			response.send({"entries": validEntries, "success": true});
 		});
 	}
 	else{
