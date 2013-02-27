@@ -1,10 +1,11 @@
 .cover {
-  width: 1000px;
-  height: 1000px;
+  width: 1200px;
+  padding-bottom: 50px;
 }
 
 img {
   float: left;
+  margin-left: 40px;
 }
 
 .rest {
@@ -14,10 +15,10 @@ img {
 
 #search-form, #addarea {
   display: inline-block;
-  margin-top: 60px;
+  margin-top: 40px;
   padding-top: 40px;
-  height: 300px;
-  width: 390px;
+  min-height: 600px;
+  width: 590px;
 }
 
 
@@ -26,39 +27,55 @@ img {
 }
 
 #search-form{
-  margin: 100px;
   float: right;
   border-left: 1px solid #c3c7cc;
 }
 
 #note {
 	border-radius: 15px;
+  background: #f7f7f7;
+  box-shadow: inset 0 0 4px 1px #cecccc;
 	padding: 10px;
 	display: block;
 	margin: 0 auto;
-	width: 300px;
-	height: 200px;
+	width: 400px;
+	height: 300px;
 	border: 2px solid #e3e6ea;
-	background: #fcfcfc;
   position: relative;
 }
 
-#link,#tag {
-	outline: none;
+#link, #tag {
+  background-color: inherit;
 	width: 100%;
-	height: 30px;
-	border: none;
-	border-bottom: 1px solid #696969;
+	height: 40px;
+  border:none;
+  margin-bottom: 4px;
+	border-bottom: 1px solid #e0e1e2;
+  font-size: 15px;
+  color: #373535;
+}
+
+#link{
+  text-decoration: underline;
+  color: #859ce6;
+}
+
+#link:hover{
+  color: #0050bf;
 }
 
 textarea {
+  overflow: scroll;
+  font-size: 15px;
+  background-color: inherit;
 	margin-top: 5px;
 	padding: 0px;
 	width: 100%;
-	height: 120px;
+	height: 140px;
 	resize: none;
 	border: none;
 	overflow: auto;
+  border-radius: 5px;
 }
 
 #submit-entry {
@@ -200,9 +217,8 @@ button {
   color: white;
   font-size: 16px;
   border: 0px;
-  margin-left: 5px;
+  margin-left: 9px;
   margin-bottom: 7px;
-  margin-right: 40px;
   vertical-align: middle;
   text-align: center;
   background-color: #5f95ea;
@@ -213,25 +229,23 @@ button {
   }
 
 button:hover{
-  box-shadow: 1px 1px 2px 1px #636363;
+  box-shadow: 1px 1px 2px 2px #636363;
 }
 
 #search {
   display: inline;
-  width: 220px;
+  width: 340px;
   height: 47px;
   font-size: 20px;
   background: #f7f7f7;
   box-shadow: inset 0 0 5px 2px #cecccc;
   border-radius: 5px;
   border: none;
+  margin: 0 auto;
   margin-top: 10px;
-  margin-left: 70px;
 }
 
-input::-webkit-input-placeholder,::-moz-input-placeholder {
-  font-size: 13px;
-}
+
 
 #entries {
     text-align: left;

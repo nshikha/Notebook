@@ -36,3 +36,12 @@ body {
 	font-family: 'Helvetica Nueue', Helvetica;
 	color: #9c9c9c;
 }
+
+footer {
+	clear: both;
+	text-align: center;
+	font-family: 'Muli', sans-serif;
+	font-size: 14px;
+	font-style: italic;
+	color: #c6c2c2;
+}
