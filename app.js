@@ -157,11 +157,11 @@ function validNotebookName(name){
 	if(name === "notebooks"){
 		return false;
 	}
-	
-	if(name.indexOf(" ") >= 0){		
+
+	if(name.indexOf(" ") >= 0){
 		return false;
 	}
-	
+
 	// Check if alphanumeric notebook name
 	// stackoverflow.com
     if( /[^a-zA-Z0-9]/.test(name) ) {
@@ -219,7 +219,7 @@ app.get("/static/:staticFilename", function (request, response) {
 app.get("/notebook/:name", function (request, response) {
     var name = request.params.name
     if(existingNotebookName(name) || !staticFile(name)) {
-        response.sendfile("static/search-add-hybrid.html");
+        response.sendfile("static/notebook.html");
     } else {
         response.sendfile("static/" + request.params.name);
     }
@@ -249,13 +249,13 @@ app.get("/notebook/:name/search/:query", function (request, response) {
 app.post('/create', function (request, response) {
 	var name = 	request.body.name;
 	var date = request.body.dateCreated;
-	
+
 	// Checks if the notebook name already exists and if its well-formed and that a date is provided
 	if(!validNotebookName(name)){
-		response.send({"status": "invalid","success": false});		
+		response.send({"status": "invalid","success": false});
 	}
 	else if(existingNotebookName(name)){
-		response.send({"status": "existing", "success": false});		
+		response.send({"status": "existing", "success": false});
 	}
 	else{
 		var notebook = initNotebook(name, date);

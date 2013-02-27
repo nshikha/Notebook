@@ -385,12 +385,14 @@ $(document).ready(function() {
     addTagE.keypress(function(event) {
         if(event.keyCode === 13) { //hit enter
             if(addLinkE.val() === "" && addTextE.val() === "") {
-                addLinkE.focus();
+                addTextE.focus();
             } else {
                 submitEntry(addLinkE, addTagE, addTextE, addInfoE, submitAddFunction);
             }
         }
     });
+
+
 
     $("#submit-entry").click(function() {
         submitEntry(addLinkE, addTagE, addTextE, addInfoE, submitAddFunction);
