@@ -64,6 +64,19 @@ function getNotebook(name, callback) {
     });
 }
 
+// Gets a list of non-deleted entries from notebook
+function getEntries(name, callback) {
+    $.ajax({
+        type: "get",
+        url: "/loadEntries/" + name,
+        success: function(data) {
+            g_searchResults = data.entries;
+            if(callback !== undefined && typeof(callback) === "function")
+                callback();
+	      }
+    });
+}
+
 // Gets a notebook header from the database
 function getNotebookHeader(name, callback, err_callback) {
     $.ajax({
