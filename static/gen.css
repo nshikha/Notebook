@@ -7,7 +7,7 @@
 	box-shadow: inset 0 0 12px 1px #696969;
 	-moz-box-shadow: inset 0 0 12px 1px #696969;
 	-webkit-box-shadow: inset 0 0 12px 1px #696969;
-	min-height: 600px;
+	min-height: 605px;
 	width: 800px;
 	text-align: center;
 	margin: 0 auto; 
@@ -35,4 +35,13 @@ body {
 	text-align: center;
 	font-family: 'Helvetica Nueue', Helvetica;
 	color: #9c9c9c;
+}
+
+footer {
+	clear: both;
+	text-align: center;
+	font-family: 'Muli', sans-serif;
+	font-size: 14px;
+	font-style: italic;
+	color: #c6c2c2;
 }
