@@ -20,7 +20,7 @@
 function textFader(text, fontsize, color, left, top, ctx){
 	var fader = this;
 
-	this.font = fontsize + "px Verdana";
+	this.font = fontsize + "px Futura";
 	this.text = text;
 	this.left = left;
 	this.top = top;
@@ -28,10 +28,10 @@ function textFader(text, fontsize, color, left, top, ctx){
 	this.alpha_incr = .02;
 	this.width;
 	this.height = fontsize*1.5;
-	this.delay = 50;
+	this.delay = 25;
 	this.status = "off";
 	this.intervalId;
-	this.color = color;
+	this.color = "#335fac";
 
 	function rectSize(){
 		ctx.font = fader.font;
@@ -116,7 +116,7 @@ function drawTags(alltags, ctx){
 
 	var drawWidth = canvasWidth - rightMargin - leftMargin;
 	var drawHeight = canvasHeight - topMargin - bottomMargin;
-	
+
 	var numTagsToDisplay = 6;
 
 	var colors = ["red","green", "blue", "black", "magenta", "cyan","salmon","chartreuse","gold","orange","seagreen","slateblue","chocolate"];

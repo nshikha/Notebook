@@ -206,7 +206,8 @@ function search() {
 
 function displayNotebookName() {
     $("#notebook-name").html(g_notebook.name);
-    setupDrawTags("graph", g_notebook.alltags);
+    var fn = setupDrawTags("graph", g_notebook.alltags);
+    $("#graph").click(fn);
 }
 
 function generateEntries(entries) {
