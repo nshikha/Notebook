@@ -20,7 +20,7 @@
 function textFader(text, fontsize, color, left, top, ctx){
 	var fader = this;
 
-	this.font = fontsize + "px Verdana";
+	this.font = fontsize + "px Futura";
 	this.text = text;
 	this.left = left;
 	this.top = top;
@@ -28,10 +28,10 @@ function textFader(text, fontsize, color, left, top, ctx){
 	this.alpha_incr = .02;
 	this.width;
 	this.height = fontsize*1.5;
-	this.delay = 50;
+	this.delay = 25;
 	this.status = "off";
 	this.intervalId;
-	this.color = color;
+	this.color = "#335fac";
 
 	function rectSize(){
 		ctx.font = fader.font;
@@ -79,10 +79,10 @@ function textFader(text, fontsize, color, left, top, ctx){
 		else if(fader.status === "hold"){
 			fader.status = "void";
 			clearInterval(fader.intervalId);
-			setTimeout(function(){
+			/*setTimeout(function(){
 				fader.status = "fadeout";
 				fader.intervalId = setInterval(fader.changeFader, fader.delay);
-			}, 2000);
+			}, 2000);*/
 		}
 		else if(fader.status === "fadeout"){
 			fader.alpha += fader.alpha_incr;
@@ -106,8 +106,6 @@ function textFader(text, fontsize, color, left, top, ctx){
 }
 
 function drawTags(alltags, ctx){
-	console.log("drawTags");
-
 	var canvasWidth = ctx.canvas.width;
 	var canvasHeight = ctx.canvas.height;
 
@@ -119,20 +117,26 @@ function drawTags(alltags, ctx){
 	var drawWidth = canvasWidth - rightMargin - leftMargin;
 	var drawHeight = canvasHeight - topMargin - bottomMargin;
 
+	var numTagsToDisplay = 6;
+
 	var colors = ["red","green", "blue", "black", "magenta", "cyan","salmon","chartreuse","gold","orange","seagreen","slateblue","chocolate"];
 	var validHeights = [];
 
-	for(var i = 0; i < 10; i++){
-		validHeights[i] = i*drawHeight/10;
+	for(var i = 0; i < numTagsToDisplay; i++){
+		validHeights[i] = i*drawHeight/numTagsToDisplay;
 	}
 
 	var context = this;
 
 	this.arr = [];
 
-	for(var i = 0; i < alltags.length && i < 6; i++){
-		var tag = "#" + alltags[i].tag;
+	for(var i = 0; i < numTagsToDisplay && alltags.length > 0; i++){
+		var tagInd = Math.floor(alltags.length * Math.random());
+		var tag = "#" + alltags[tagInd].tag;
+		alltags.splice(tagInd, 1);
+
 		console.log(tag);
+
 		var x = drawWidth * Math.random();
 
 		// Make sure they don't overlap
@@ -160,7 +164,18 @@ function drawTags(alltags, ctx){
 
 function keepDrawingTags(alltags, ctx){
 	return function(){
-		var tagCollection = new drawTags(alltags, ctx);
+		var newalltags = alltags.slice(0);
+		newalltags.sort(function(elem1, elem2){
+			if(elem1.numEntries > elem2.numEntries){
+				return 1;
+			}
+			if(elem1.numEntries < elem2.numEntries){
+				return -1;
+			}
+			return 0;
+		});
+
+		var tagCollection = new drawTags(newalltags.slice(0,25), ctx);
 		tagCollection.startFade();
 	}
 }
@@ -170,5 +185,5 @@ function setupDrawTags(canvasId,alltags){
 	var ctx = canvas.getContext('2d');
 	var callback = keepDrawingTags(alltags, ctx);
 	callback();
-	setInterval(callback, 7000);
+	return callback;
 }
