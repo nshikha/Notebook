@@ -79,6 +79,22 @@ img {
   margin: 10px 0px;
 }
 
+.entry .operations {
+  padding-bottom: 15px;
+  position: relative;
+}
+
+.operations .edit {
+  position: absolute;
+  right: 55px;
+}
+
+.operations .delete {
+  position: absolute;
+  right: 0px;
+}
+
+
 .entry h3 a {
   color: #859ce6;
   margin-top: 20px;

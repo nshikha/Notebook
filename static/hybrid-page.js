@@ -236,7 +236,7 @@ function generateEntries(entries) {
             var edit = $('<a href="#" class="edit">edit</a>').click(function () {
                 editEntryDialog(e);
             });
-            var del = $('<a href="#" class="delete">del</a>').click(function() {
+            var del = $('<a href="#" class="delete">delete</a>').click(function() {
                 delEntryDialog(e);
             });
             var entry = $('<div class="entry">');
