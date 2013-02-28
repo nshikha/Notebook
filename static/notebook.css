@@ -89,11 +89,10 @@ img {
 .entry p.tags {
   margin-top: 10px;
   margin-bottom: 0px;
-  border-top: 2px solid rgb(223, 217, 217);
 }
 
 .entry .operations {
-  border-top: 2px solid rgb(223, 217, 217);
+  border-top: 1px solid rgb(223, 217, 217);
   margin-bottom: 5px;
 }
 
@@ -220,6 +219,7 @@ canvas {
 #stage-edit,#stage-del {
   box-shadow: 0 0 20px #000000;
   margin-left: 35%;
+  margin-bottom:5px;
   background-color: #FFFFFF;
   width: 35%;
   min-width: 450px;
