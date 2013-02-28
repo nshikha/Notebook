@@ -8,7 +8,7 @@ function flash_message(info, cls, msgs, timeout, timeoutfn) {
     info.html("");
     info.removeClass();
     msgs.forEach(function (e) {
-        info.append($('<p>').html(e));
+        info.append($('<span>').html(e));
     });
     info.addClass(cls);
 
@@ -159,13 +159,15 @@ function delEntryDialog(entry) {
     });
     $("#confirm-del").click(function() {
         var tagList = entry.tags;
-        var info = addInfoE;
+        var info = $("#del-info");
         removeEntry(g_notebook.name, entry.index, function() {
-            $("#spotlight").fadeOut(100);
             console.log("removed");
             flash_message(info, "success", ["Entry Deleted Successfully"],
-                          1500);
-
+                          1500, function() {
+                              info.html("");
+                              info.removeClass("success");
+                              $("#spotlight").fadeOut(150);
+                          });
             reSearch(tagList);
         });
     });
@@ -208,7 +210,7 @@ function displayNotebookName() {
 
 function generateEntries(entries) {
     $("#entries").html("");
-    if(entries) {
+    if(entries && entries.length > 0) {
         //sort entries correctly
         if($("#sort-accessed").hasClass("selected"))
             sortEntriesMRU(entries);
@@ -226,7 +228,7 @@ function generateEntries(entries) {
                                       .html(e.content));
             }
             var prepareTags = e.tags.map(function(s) { return "#"+s;});
-            var tags = $('<p class="tags">').html(prepareTags.join(" | "));
+            var tags = $('<p class="tags">').html(prepareTags.join("   "));
             var date = $("<span>").html(e.dateAdded)
             var edit = $('<a href="#" class="edit">edit</a>').click(function () {
                 editEntryDialog(e);

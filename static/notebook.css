@@ -38,7 +38,7 @@ img {
   border-left: 1px solid #c3c7cc;
 }
 
-#note{
+#edit-note,#note {
 	border-radius: 15px;
   background: #f7f7f7;
   box-shadow: inset 0 0 4px 1px #cecccc;
@@ -109,7 +109,7 @@ img {
 
 
 
-#link, #tag {
+#edit-link,#link,#edit-tag,#tag {
   background-color: inherit;
 	width: 100%;
 	height: 40px;
@@ -122,14 +122,12 @@ img {
 }
 
 
-
-
-#link{
+#edit-link,#link {
   text-decoration: underline;
   color: #859ce6;
 }
 
-#link:hover{
+#edit-link, #link:hover{
   color: #0050bf;
 }
 
@@ -147,7 +145,7 @@ textarea {
   border-radius: 5px;
 }
 
-#submit-entry {
+#edit-entry,#submit-entry {
   position: absolute;
   margin-top: 10px;
   width: 32px;
@@ -157,63 +155,33 @@ textarea {
   opacity: 0.4;
 }
 
-#information {
+#edit-info,#information {
   margin: 5px auto;
-  width: 300px;
+  width: 400px;
 }
 
-
-#edit-note {
-	border-radius: 15px;
-	padding: 10px;
-	display: block;
-	margin: 0 auto;
-  margin-top: 12px;
-	width: 300px;
-	height: 200px;
-	border: 2px solid #e3e6ea;
-	background: #fcfcfc;
-  position: relative;
-}
-
-#edit-link,#edit-tag {
-	outline: none;
-	width: 100%;
-	height: 30px;
-	border: none;
-	border-bottom: 1px solid #696969;
-}
-
-#edit-entry {
-  position: absolute;
-  margin-top: 10px;
-  width: 32px;
-  height: 32px;
-  right: 10px;
-  bottom: 10px;
-  opacity: 0.4;
-}
-
-#edit-info {
-  margin: 5px auto;
-  width: 300px;
-}
 .error {
   background-color: #F2DEDE;
   border: 2px solid #d58a8a;
   padding: 10px;
   color: #B94A48;
 }
-.error p {
+
+.error span {
   margin: 5px;
+  display: block;
 }
+
 .success {
   background-color: #DFF0D8;
   border: 2px solid #468847;
   padding: 10px;
   color: green;
 }
-
+.success span {
+  margin: 5px;
+  display: block;
+}
 
 #tag-graph {
 	margin: 0 auto;
@@ -249,14 +217,14 @@ canvas {
 
 #stage-edit,#stage-del {
   box-shadow: 0 0 20px #000000;
-  margin-left: 25%;
+  margin-left: 35%;
   background-color: #FFFFFF;
-  width: 50%;
-  min-width: 300px;
+  width: 35%;
+  min-width: 450px;
 }
 
-#stage-edit,#stage-del h2 {
-  background-color: #042166;
+#stage-edit h2, #stage-del h2 {
+  background-color: #005fbc;
   color: #FFFFFF;
   font-weight: bold;
   font-size: 32px;
