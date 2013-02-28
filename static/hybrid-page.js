@@ -323,7 +323,10 @@ $(document).ready(function() {
     if(urlSegments[0] === "notebook" && urlSegments.length > 1){
         g_parsedName = urlSegments[1];
         console.log("getting notebook: " + g_parsedName);
-        getNotebookHeader(g_parsedName, displayNotebookName);
+        getNotebookHeader(g_parsedName, displayNotebookName, function() {
+            flash_message(addInfoE, "error", [
+                "The notebook "+g_parsedName+" from the url does not exist!"]);
+        });
     }
     generateEntries(); // show no entries found
 
