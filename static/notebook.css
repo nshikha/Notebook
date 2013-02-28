@@ -56,7 +56,7 @@ img {
   padding: 10px;
   display: block;
   margin: 0 auto;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   width: 500px;
   box-shadow: inset 0 0 4px 1px #cecccc;
   border-bottom: 2px solid rgb(223, 217, 217);
@@ -68,12 +68,12 @@ img {
   font-size: 12px;
   position: absolute;
   right: 8px;
-  top: 8px;
+  top: 4px;
   padding:5px;
 }
 
 .entry h3, p, .operations {
-  padding: 10px;
+  padding-top: 10px;
   margin: 10px 0px;
 }
 
@@ -270,6 +270,7 @@ button:hover{
 }
 
 #search {
+  padding-left: 7px;
   display: inline;
   width: 340px;
   height: 47px;
@@ -288,6 +289,7 @@ button:hover{
     text-align: left;
     font-size: 16px;
     margin-top: 40px;
+    font-family: 'Helvetica Neue', Verdana, Sans-Serif;
 }
 
 #entries .no-entry-msg {
@@ -300,17 +302,6 @@ button:hover{
     font-size: 16px;
 }
 
-footer {
-  position: relative;
-  height: 20px;
-  margin: 10px auto 0px auto;
-  width: 80%;
-  text-align: center;
-  font-family: 'Muli', sans-serif;
-  font-size: 14px;
-  font-style: italic;
-  color: #c6c2c2;
-}
 
 #entries-container {
   margin-top: 50px;
@@ -346,8 +337,11 @@ footer {
   text-shadow: 1px 1px 1px #000;
   box-shadow: 0 0 3px #696;
   padding: 10px;
-
   color: #f7f7f7;
   text-decoration: none;
 
+}
+
+footer {
+  font-size: 20px;
 }
