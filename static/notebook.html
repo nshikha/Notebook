@@ -7,73 +7,73 @@
     <link href= "gen.css" rel="stylesheet" type="text/css">
     <link href="notebook.css" rel="stylesheet" type="text/css">
     <script src="jquery-1.9.0.js"></script>
+    <title>My notebook</title>
   </head>
   <body>
   	<div class = "cover">
-      <img src = "small-logo.png" alt = "logo"/> 
+      <a href="/static/index.html"><img src = "small-logo.png" alt = "logo"/></a>
       <span id="notebook-name">   </span>
       <div class = "rest">
-            <div id="search-form">
-                <input type = "text" id = "search" placeholder = " Enter tags to search" />
-                <button id="go"> </button>
+        <div id="search-form">
+          <input type = "text" id = "search" placeholder = " Enter tags to search" />
+          <button id="go"> </button>
 
-                <div id="entries-container">
-                  <span id="sort-by">
-                    <a href="#search-form" id="sort-accessed">Last accessed</a>
-                    <a href="#search-form" id="sort-oldest" class="selected"> Oldest first </a>
-                    <a href="#search-form" id="sort-newest"> Newest first </a>
-                  </span>
-                        <div id="entries">
-                        </div>  
-                </div> 
-
+          <div id="entries-container">
+            <span id="sort-by">
+              <a href="#search-form" id="sort-accessed">Last accessed</a>
+              <a href="#search-form" id="sort-oldest" class="selected"> Oldest first </a>
+              <a href="#search-form" id="sort-newest"> Newest first </a>
+            </span>
+            <div id="entries">
             </div>
+          </div>
+        </div>
 
-            <div id = "addarea">
-                <div id="information"></div>
+        <div id = "addarea">
+          <div id="information"></div>
 
-                <div id = "note">
-                  <input type = "text" name = "link" id = "link" autocomplete = "on"
-                         placeholder = "http://learn.shayhowe.com/advanced-html-css/transitions-animations" />
-                  <input type = "text" name = "tag" id = "tag" autocomplete = "on"
-                         placeholder = "css, animations, transitions" />
-                  <textarea id = "text" form = "note" placeholder = "Neat stuff on timing, -display- cannot be transitioned" name = "text"></textarea>
-                  <input type="image" id="submit-entry" src="plus.png" />
-                </div>
+          <div id = "note">
+            <input type = "text" name = "link" id = "link" autocomplete = "on"
+                   placeholder = "http://learn.shayhowe.com/advanced-html-css/transitions-animations" />
+            <input type = "text" name = "tag" id = "tag" autocomplete = "on"
+                   placeholder = "css, animations, transitions" />
+            <textarea id = "text" form = "note" placeholder = "Neat stuff on timing, -display- cannot be transitioned" name = "text"></textarea>
+            <input type="image" id="submit-entry" src="plus.png" />
+          </div>
 
-                <div id = "tag-graph">
-                  <canvas id = "graph" width = "300" height = "300">
-                  </canvas>
-                </div>
-            </div>
+          <div id = "tag-graph">
+            <canvas id = "graph" width = "300" height = "300">
+            </canvas>
+          </div>
+        </div>
       </div> <!-- close rest -->
 
       <div id="spotlight">
-          <div id="wrapper">
+        <div id="wrapper">
 
-            <div id="stage-del">
-                  <h2> Delete Confirmation </h2>
-                  <p> Are you sure you want to delete this note? </p>
-                  <input type="button" id="cancel-del" value="No" />
-                  <input type="button" id="confirm-del" value="Yes" />
-            </div>
-
-            <div id="stage-edit">
-                  <h2> Edit Entry</h2>
-                  <div id="edit-info"></div>
-                  <div id = "edit-note">
-            	      <input type = "text" name = "link" id = "edit-link" placeholder = "Link" />
-            	      <input type = "text" name = "tag" id = "edit-tag" placeholder = "Tags:  #237, '#css, #html'" autocomplete = "on" />
-            	      <textarea id = "edit-text" form = "note" placeholder = "Notes" name = "text" autocomplete = "on"></textarea>
-                    <input type="image" id="edit-entry" src="plus.png" />
-                  </div>
-            </div>
-
+          <div id="stage-del">
+            <h2> Delete Confirmation </h2>
+            <div id="del-info"></div>
+            <p> Are you sure you want to delete this note? </p>
+            <input type="button" id="cancel-del" value="No" />
+            <input type="button" id="confirm-del" value="Yes" />
           </div>
+
+          <div id="stage-edit">
+            <h2> Edit Entry</h2>
+            <div id="edit-info"></div>
+            <div id = "edit-note">
+            	<input type = "text" name = "link" id = "edit-link" placeholder = "Link" />
+            	<input type = "text" name = "tag" id = "edit-tag" placeholder = "Tags:  #237, '#css, #html'" autocomplete = "on" />
+            	<textarea id = "edit-text" form = "note" placeholder = "Notes" name = "text" autocomplete = "on"></textarea>
+              <input type="image" id="edit-entry" src="plus.png" />
+            </div>
+          </div>
+        </div>
       </div> <!--close spotlight-->
 
       <footer>
-      Created By: Anand Pattabiraman, Dan Yang & Shikhara R Nalla
+        Created By: Anand Pattabiraman, Dan Yang & Shikhara R Nalla
       </footer>
     </div> <!--close cover-->
 
