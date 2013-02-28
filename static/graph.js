@@ -79,10 +79,10 @@ function textFader(text, fontsize, color, left, top, ctx){
 		else if(fader.status === "hold"){
 			fader.status = "void";
 			clearInterval(fader.intervalId);
-			setTimeout(function(){
+			/*setTimeout(function(){
 				fader.status = "fadeout";
 				fader.intervalId = setInterval(fader.changeFader, fader.delay);
-			}, 2000);
+			}, 2000);*/
 		}
 		else if(fader.status === "fadeout"){
 			fader.alpha += fader.alpha_incr;
@@ -106,7 +106,6 @@ function textFader(text, fontsize, color, left, top, ctx){
 }
 
 function drawTags(alltags, ctx){
-
 	var canvasWidth = ctx.canvas.width;
 	var canvasHeight = ctx.canvas.height;
 
@@ -186,5 +185,5 @@ function setupDrawTags(canvasId,alltags){
 	var ctx = canvas.getContext('2d');
 	var callback = keepDrawingTags(alltags, ctx);
 	callback();
-	setInterval(callback, 7000);
+	return callback;
 }
