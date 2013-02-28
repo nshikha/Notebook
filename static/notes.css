@@ -22,4 +22,11 @@ Notebook --- (Note) in blue. book in some lines.
 3. Pen ----> evernote --- see evernote site for blue background
 4. notebook - t with a tag - o o with a link - tumblr
 
+old body color
+
+
+background-image: -webkit-gradient(radial, center top, 0, center top, 425, color-stop(0, #52A1D9), color-stop(1, #0050BF));
+	background-image: -moz-radial-gradient(center top, circle closest-corner, #52A1D9 0%, #0050BF 100%);
+	background-image: -webkit-radial-gradient(center top, circle closest-corner, #52A1D9 0%, #0050BF 100%);
+
 box-shadow: 1px 0px 1px #203891,0px 1px 1px #3852b1,2px 1px 1px #203891,1px 2px 1px #3852b1,3px 2px 1px #203891,2px 3px 1px #3852b1,4px 3px 1px #203891,3px 4px 1px #3852b1,5px 4px 1px #203891,4px 5px 1px #3852b1,6px 5px 1px #203891;

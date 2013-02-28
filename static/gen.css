@@ -29,9 +29,10 @@ img {
 
 
 body {
-	background-image: -webkit-gradient(radial, center top, 0, center top, 425, color-stop(0, #52A1D9), color-stop(1, #0050BF));
-	background-image: -moz-radial-gradient(center top, circle closest-corner, #52A1D9 0%, #0050BF 100%);
-	background-image: -webkit-radial-gradient(center top, circle closest-corner, #52A1D9 0%, #0050BF 100%);
+	background-color: #335fac;
+    background-image: -moz-linear-gradient(top, #335fac, #0064cd);
+    background-image: -webkit-linear-gradient(top, #335fac, #0064cd); 
+    background-image: linear-gradient(top, #335fac, #0064cd);
 	text-align: center;
 	font-family: 'Helvetica Nueue', Helvetica;
 	color: #9c9c9c;
