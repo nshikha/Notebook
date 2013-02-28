@@ -49,6 +49,7 @@ img {
 	height: 300px;
 	border: 2px solid #e3e6ea;
   position: relative;
+  margin-bottom: 10px;
 }
 
 .entry {
@@ -73,6 +74,7 @@ img {
 }
 
 .entry h3, p, .operations {
+  word-wrap: break-word;
   padding-top: 10px;
   margin: 10px 0px;
 }
@@ -229,25 +231,31 @@ canvas {
   background-color: #005fbc;
   color: #FFFFFF;
   font-weight: bold;
-  font-size: 32px;
+  font-size: 24px;
   padding: 10px;
+  padding-bottom: 14px;
+  font-family: 'Futura', Verdana, sans-serif
+}
+
+#stage-del h2 {
+  font-size: 18px;
 }
 
 
-#cancel-del {
+/* red */
+#cancel-del, #confirm-del {
   background: #DD3636;
   padding: 10px 20px;
   border: none;
   color: #FFFFFF;
   font-size: 20px;
+  border-radius: 3px;
+  margin: 10px;
 }
 
+/* green */
 #confirm-del {
   background: #5DB95D;
-  padding: 10px 20px;
-  border: none;
-  color: #FFFFFF;
-  font-size: 20px;
 }
 
 button {
@@ -317,14 +325,12 @@ button:hover{
   box-shadow: 1px 1px 2px 2px #636363;
 }
 
-#sort-by:active{
+
+#sort-by a.selected {
+    background position: 0 -15px;
     -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.05);
     -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.05);
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-#sort-by a.selected {
-    text-decoration: underline;
 }
 
 #sort-by a {
