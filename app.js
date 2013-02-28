@@ -356,16 +356,18 @@ app.post('/removeEntry', function (request, response) {
 			}
 			else{
 				var entry = notebook.entries[index];
-				entry.deleted = true;
-				
-				// Remove associated tags from access_database
-				deleteEntryTags(notebook, entry.index);
+				if(!entry.deleted){
+					entry.deleted = true;
+					
+					// Remove associated tags from access_database
+					deleteEntryTags(notebook, entry.index);
 
-				// Persist changes to notebook
-				writeNotebookToFile(notebook);
+					// Persist changes to notebook
+					writeNotebookToFile(notebook);
 
-				// Send back the updated notebook
-				response.send({"success": true});
+					// Send back the updated notebook
+					response.send({"success": true});
+				}
 			}
 
 		});
