@@ -227,6 +227,7 @@ function generateEntries(entries) {
             } else {
                 link = $("<h3>").html($('<a href="'+e.content+'">')
                                       .html(e.content));
+                text = $("<p>").html($("<pre>").html(e.desc));
             }
             var prepareTags = e.tags.map(function(s) { return "#"+s;});
             var tags = $('<p class="tags">').html(prepareTags.join("   "));
