@@ -1,19 +1,21 @@
 module.exports = (function () {
     var mongoose = require('mongoose');
     var Schema = mongoose.Schema;
+    var ObjectId = Schema.ObjectId
     var models = {};
 
 
     var NotebookSchema = new Schema({
         name        : {type: String, required: true},
         tags        : [{type: ObjectId, ref: 'Tag'}],
-        entries     : [(type: ObjectId, ref: 'Entry'}],
+        entries     : [{type: ObjectId, ref: 'Entry'}],
         dateCreated : Date
     });
     models.Notebook = mongoose.model('Notebook', NotebookSchema);
 
     var TagSchema = new Schema({
-        tag : {type: String, required: true}
+        tag : {type: String, required: true},
+        entries : Number
     });
     models.Tag = mongoose.model('Tag', TagSchema);
 

@@ -45,8 +45,8 @@ function validNotebookName(name){
 
 function existingNotebookName(name) {
     return m.Notebook.find({name: name})
-        .exec( function(err, person) {
-            if(err) return false;
+        .exec( function(err, nb) {
+            if(err === null) return false;
             return true;
         });
 }
@@ -61,7 +61,7 @@ function createNotebook(name, date) {
     notebook.save(function(err) {
         if(err) return errorObj("Notebook failed to save: " + err,
                                 'failed');
-        return {success: true data: notebook};
+        return {success: true, data: notebook};
     });
 }
 
@@ -93,8 +93,15 @@ app.post('/create', function (request, response) {
 	  var date = request.body.dateCreated;
     if(!validNotebookName(name)) {
         response.send(errorObj('Invalid Notebook Name', 'invalid'));
-    } else if (existingNotebookName{name)) {
-        response.send({errorObj('Notebook exists', 'existing'));
+    } else {
+
+}
+
+
+
+ if (existingNotebookName(name)) {
+        console.log("Notebook exists: "+name);
+        response.send(errorObj('Noptebook exists', 'existing'));
     } else {
         var result = createNotebook(name, date);
         if(result.success = false) {
@@ -106,8 +113,7 @@ app.post('/create', function (request, response) {
     }
 });
 
-
-// Updates a date in a notebook
+// Updates an entry
 app.post('/upDate', function (request, response) {
 	  var name = 	request.body.name;
 	  var index = request.body.entryIndex;
