@@ -1,12 +1,45 @@
 var express = require("express"); // imports express
 var app = express();        // create a new instance of express
-
+var mongo = require("mongodb");
 // imports the fs module (reading and writing to a text file)
 var fs = require("fs");
 
 // the bodyParser middleware allows us to parse the
 // body of a request
 app.use(express.bodyParser());
+
+// // Asynchronously write file contents, then call callbackFn
+// function writeFile(filename, data, callbackFn) {
+
+//   fs.writeFile(filename, data, function(err) {
+//     if (err) {
+//       console.log("Error writing file: ", filename);
+//     } else {
+//       console.log("Success writing file: ", filename);
+//     }
+//     if (callbackFn) callbackFn(err);
+//   });
+// }
+
+
+// Persists a notebooks contents to file
+function writeNotebookToMongo(notebook){
+    db.collection("notebooks", function(err, collection) {
+        if(err) throw err;
+        if(g_notebookList.indexOf(notebook.name) === -1) {//create new notebook
+            collection.insert(notebook, {w:1}, function(err, result) {
+                if(err) throw err;
+                console.log("created new notebook: "+notebook.name);
+            });
+        } else {
+            collection.update({name: notebook.name}, notebook, {w:1},
+                              function(err, result) {
+                                  if(err) throw err;
+                                  console.log("updated "+notebook.name);
+                              });
+        }
+    });
+}
 
 // Asynchronously read file contents, then call callbackFn
 function readFile(filename, defaultData, callbackFn) {
@@ -21,16 +54,18 @@ function readFile(filename, defaultData, callbackFn) {
   });
 }
 
-// Asynchronously write file contents, then call callbackFn
-function writeFile(filename, data, callbackFn) {
-  fs.writeFile(filename, data, function(err) {
-    if (err) {
-      console.log("Error writing file: ", filename);
-    } else {
-      console.log("Success writing file: ", filename);
-    }
-    if (callbackFn) callbackFn(err);
-  });
+function readNotebook(notebookName, defaultData, callbackFn) {
+    db.collection('notebooks', function(err, collection) {
+        if(err) {
+            console.log("Error retrieving file: "+notebookName);
+            console.log("Error:  "+err);
+            if(callbackFn) callbackFn(err, defaultData);
+        } else {
+            collection.findOne({name: notebookName}, function(err, data) {
+                if(callbackFn) callbackFn(err, data);
+            });
+        }
+    });
 }
 
 
@@ -85,7 +120,7 @@ function initNotebook(name, date) {
 	var notebook = new Notebook(name, date);
 
 	//Create file for notebook object
-	writeNotebookToFile(notebook);
+	writeNotebookToMongo(notebook);
 
 	//Add to appropriate places
 	addToNotebookList(name);
@@ -120,17 +155,12 @@ function getNotebookHeader(notebook){
 					 "success": true}
 }
 
-// Persists a notebooks contents to file
-function writeNotebookToFile(notebook){
-	writeFile(getDBFilename(notebook.name), JSON.stringify(notebook));
-}
-
 // Updates the database and the global notebooks object with the information.
 function addToNotebookList(name){
 	g_notebookList.push(name);
 	g_notebookList.sort();
-	writeFile(getDBFilename("notebooks"),
-		JSON.stringify(g_notebookList));
+//	writeFile(getDBFilename("notebooks"),
+//		JSON.stringify(g_notebookList));
 }
 
 
@@ -350,11 +380,11 @@ function checkAllNotebooks(){
 
 	for(var i = 0; i < notebookList.length; i++){
 		var name = notebookList[i];
-		readFile(getDBFilename(name), {}, function(err, data) {
-			var notebook = JSON.parse(data);
-
-			if(!checkAccessDatabase(notebook)){
-			}
+    readNotebook(name, {}, function(err, notebook) {
+        if(err) throw err;
+			  if(!checkAccessDatabase(notebook)){
+            console.log("shitt access database for notebook: "+notebook.name);
+			  }
 		});
 
 		console.log("Done checking notebooks.");
@@ -371,7 +401,7 @@ function checkAccessDatabase(notebook){
 				console.log("Property: " +  prop + " : " + i);
 				printEntrySummary(notebook.entries);
 				generateAccessDatabase(notebook);
-				writeNotebookToFile(notebook);
+				writeNotebookToMongo(notebook);
 				return false;
 			}
 		}
@@ -476,8 +506,7 @@ app.post('/upDate', function (request, response) {
 		response.send({"success": false});
 	}
 	else{
-		readFile(getDBFilename(name), {}, function(err, data) {
-			notebook = JSON.parse(data);
+    readNotebook(name, {}, function(err, notebook) {
 
 			if(index >= notebook.entries.length){
 				response.send({"status": "invalid", "success": false});
@@ -485,7 +514,7 @@ app.post('/upDate', function (request, response) {
 
 			notebook.entries[index].dateAccessed = dateAccessed;
 			// Persist changes to notebook
-			writeNotebookToFile(notebook);
+			writeNotebookToMongo(notebook);
 
 			// Send back the updated notebook
 			response.send({"notebook": notebook,
@@ -510,8 +539,7 @@ app.post('/removeEntry', function (request, response) {
 		response.send({"success": false});
 	}
 	else{
-		readFile(getDBFilename(name), {}, function(err, data) {
-			notebook = JSON.parse(data);
+    readNotebook(name, {}, function(err, notebook) {
 
 			if(index >= notebook.entries.length){
 				response.send({"success": false});
@@ -520,12 +548,12 @@ app.post('/removeEntry', function (request, response) {
 				var entry = notebook.entries[index];
 				if(!entry.deleted){
 					entry.deleted = true;
-					
+
 					// Remove associated tags from access_database
 					deleteEntryTags(notebook, entry.index);
 
 					// Persist changes to notebook
-					writeNotebookToFile(notebook);
+					writeNotebookToMongo(notebook);
 
 					// Send back the updated notebook
 					response.send({"success": true});
@@ -547,8 +575,7 @@ app.post('/editEntry', function (request, response) {
 		response.send({"success": false});
 	}
 	else{
-		readFile(getDBFilename(name), {}, function(err, data) {
-			notebook = JSON.parse(data);
+    readNotebook(name, {}, function(err, notebook) {
 
 			var index = entry.index;
 
@@ -567,7 +594,7 @@ app.post('/editEntry', function (request, response) {
 				addEntryTags(notebook, dbEntry);
 
 				// Persist changes to notebook
-				writeNotebookToFile(notebook);
+				writeNotebookToMongo(notebook);
 
 				// Send back the formatted databaseEntry
 				response.send({"notebook": notebook,
@@ -590,8 +617,7 @@ app.post('/addEntry', function (request, response) {
 		response.send({"success": false});
 	}
 	else{
-		readFile(getDBFilename(name), {}, function(err, data) {
-			notebook = JSON.parse(data);
+    readNotebook(name, {}, function(err, notebook) {
 
 			var index = notebook.entries.length;
 
@@ -606,7 +632,7 @@ app.post('/addEntry', function (request, response) {
 
 
 			// Persist changes to notebook
-			writeNotebookToFile(notebook);
+			writeNotebookToMongo(notebook);
 
 			// Send back the formatted databaseEntry
 			response.send({"notebook": notebook,
@@ -628,11 +654,9 @@ app.get('/notebooks', function (request, response) {
 // Loads an existing notebook header
 app.get('/loadHeader/:name', function (request, response) {
 	var name = request.params.name;
-	var notebook;
 
 	if(existingNotebookName(name)){
-		readFile(getDBFilename(name), {}, function(err, data) {
-			notebook = JSON.parse(data);
+    readNotebook(name, {}, function(err, notebook) {
 
 			// Send back the header for the notebook, but not the entries
 			response.send(getNotebookHeader(notebook));
@@ -646,11 +670,10 @@ app.get('/loadHeader/:name', function (request, response) {
 // Loads an existing notebook
 app.get('/load/:name', function (request, response) {
 	var name = request.params.name;
-	var notebook;
+
 
 	if(existingNotebookName(name)){
-		readFile(getDBFilename(name), {}, function(err, data) {
-			notebook = JSON.parse(data);
+    readNotebook(name, {}, function(err, notebook) {
 
 			// Send back the header for the notebook, but not the entries
 			//response.send(getNotebookHeader(notebook));
@@ -665,11 +688,9 @@ app.get('/load/:name', function (request, response) {
 // Sends back a list of all of the entries.
 app.get('/loadEntries/:name', function (request, response) {
 	var name = request.params.name;
-	var notebook;
 
 	if(existingNotebookName(name)){
-		readFile(getDBFilename(name), {}, function(err, data) {
-			notebook = JSON.parse(data);
+    readNotebook(name, {}, function(err, notebook) {
 
 			var validEntries = notebook.entries.filter(function(elem){
 				return !elem.deleted;
@@ -689,8 +710,7 @@ app.get('/search/:name/:tags', function (request, response) {
 	var tags = request.params.tags;
 
 	if(existingNotebookName(name)){
-		readFile(getDBFilename(name), {}, function(err, data) {
-			var notebook = JSON.parse(data);
+    readNotebook(name, {}, function(err, notebook) {
 
 			var entries = parseSearch(notebook, tags);
 			if(entries === undefined){
@@ -707,23 +727,50 @@ app.get('/search/:name/:tags', function (request, response) {
 
 
 
-//--------------------------------------------------------------------- 
+//---------------------------------------------------------------------
 //Finally, initialize the server, then activate the server at port 8889
 
+var db = new mongo.Db('myNotebook', new mongo.Server('localhost', 27017));
 
-function initServer() {
-  // When we start the server, we must load the stored data
-  var defaultList = "[]";
-  readFile(getDBFilename("notebooks"), defaultList, function(err, data) {
-	g_notebookList = JSON.parse(data);
-	checkAllNotebooks();
-  });
-  //get list of static files
-  fs.readdir("static/", function(err, files) {
-      g_staticFiles = files;
-  });
-}
+//call app.listen in this!
+db.open(function(err, db) {
+    if(err){
+        console.log("ERROR opening database:  "+err);
+    } else {
+        console.log("Database Connection established");
+        db.collection('notebooks', function(err, collection) {
+            console.log("herp");
+            collection.find({},{name: 1, _id: 0}).toArray(function(err, items) {
+                if(err) throw err;
+                for(var i = 0; i < items.length; i++)
+                    g_notebookList.push(items[i].name);
+                console.log("All notebooks: "+items);
 
-initServer();
-app.listen(8889);
-console.log("created server on port 8889");
+                console.log(g_notebookList);
+                checkAllNotebooks();
+            });
+        });
+        fs.readdir("static/", function(err, files) {
+            g_staticFiles = files;
+        });
+        app.listen(8889);
+        console.log("created server on port 8889");
+
+    }
+});
+
+
+// function initServer() {
+//   // When we start the server, we must load the stored data
+//   var defaultList = "[]";
+//   readFile(getDBFilename("notebooks"), defaultList, function(err, data) {
+// 	g_notebookList = JSON.parse(data);
+// 	checkAllNotebooks();
+//   });
+//   //get list of static files
+//   fspp.readdir("static/", function(err, files) {
+//       g_staticFiles = files;
+//   });
+// }
+
+// initServer();
