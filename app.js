@@ -448,6 +448,9 @@ function printAccessDatabase(accessDB){
 // ----------------------------------------------------------------------
 // Server writes and responses
 
+app.get('/', function(request, response) {
+    response.redirect('/static/index.html');
+});
 
 // This is for serving files in the static directory
 app.get("/static/:staticFilename", function (request, response) {
