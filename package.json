@@ -1,0 +1,7 @@
+{
+    "name": "myNotebook-237",
+    "dependencies": {
+        "express": "3.0.3",
+        "mongodb": ""
+    }
+}
