@@ -1,7 +1,14 @@
 {
     "name": "myNotebook-237",
+    "description": "Your online notebook",
+    "version": "1.0.0",
+    "contributors": [
+        { "name": "Dan Yang" },
+        { "name": "Shikha Nalla" },
+        { "name": "Anand Pattabiraman" }
+    ],
     "dependencies": {
         "express": "3.0.3",
-        "mongodb": ""
+        "mongodb": "1.2.13"
     }
 }
