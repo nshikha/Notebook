@@ -1,6 +1,9 @@
 var express = require("express"); // imports express
 var app = express();        // create a new instance of express
 var mongo = require("mongodb");
+var db;
+var MongoClient = mongo.MongoClient;
+
 // imports the fs module (reading and writing to a text file)
 var fs = require("fs");
 
@@ -730,15 +733,15 @@ app.get('/search/:name/:tags', function (request, response) {
 //---------------------------------------------------------------------
 //Finally, initialize the server, then activate the server at port 8889
 
-var db = new mongo.Db('myNotebook', new mongo.Server('localhost', 27017));
+
 
 //call app.listen in this!
-db.open(function(err, db) {
+function dbConnectCallback (err, database) {
     if(err){
         console.log("ERROR opening database:  "+err);
     } else {
         console.log("Database Connection established");
-        db.collection('notebooks', function(err, collection) {
+        database.collection('notebooks', function(err, collection) {
             console.log("herp");
             collection.find({},{name: 1, _id: 0}).toArray(function(err, items) {
                 if(err) throw err;
@@ -755,22 +758,11 @@ db.open(function(err, db) {
         });
         app.listen(8889);
         console.log("created server on port 8889");
-
+        db = database;
     }
-});
+};
 
-
-// function initServer() {
-//   // When we start the server, we must load the stored data
-//   var defaultList = "[]";
-//   readFile(getDBFilename("notebooks"), defaultList, function(err, data) {
-// 	g_notebookList = JSON.parse(data);
-// 	checkAllNotebooks();
-//   });
-//   //get list of static files
-//   fspp.readdir("static/", function(err, files) {
-//       g_staticFiles = files;
-//   });
-// }
-
-// initServer();
+var connectionURI = process.env.MONGOLAB_URI ||
+    "mongodb://localhost:27017/myNotebook";
+//Everything happens here
+MongoClient.connect(connectionURI, dbConnectCallback);
