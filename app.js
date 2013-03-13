@@ -1,31 +1,19 @@
 var express = require("express"); // imports express
+var fs = require("fs");
 var app = express();        // create a new instance of express
 var mongo = require("mongodb");
-var db;
 var MongoClient = mongo.MongoClient;
+var connectionURI = process.env.MONGOLAB_URI ||
+    "mongodb://localhost:27017/myNotebook";
+var port = process.env.PORT || 8889;
+var db;
 
-// imports the fs module (reading and writing to a text file)
-var fs = require("fs");
 
 // the bodyParser middleware allows us to parse the
 // body of a request
 app.use(express.bodyParser());
 
-// // Asynchronously write file contents, then call callbackFn
-// function writeFile(filename, data, callbackFn) {
 
-//   fs.writeFile(filename, data, function(err) {
-//     if (err) {
-//       console.log("Error writing file: ", filename);
-//     } else {
-//       console.log("Success writing file: ", filename);
-//     }
-//     if (callbackFn) callbackFn(err);
-//   });
-// }
-
-
-// Persists a notebooks contents to file
 function writeNotebookToMongo(notebook){
     db.collection("notebooks", function(err, collection) {
         if(err) throw err;
@@ -756,13 +744,12 @@ function dbConnectCallback (err, database) {
         fs.readdir("static/", function(err, files) {
             g_staticFiles = files;
         });
-        app.listen(8889);
+        app.listen(port);
         console.log("created server on port 8889");
         db = database;
     }
 };
 
-var connectionURI = process.env.MONGOLAB_URI ||
-    "mongodb://localhost:27017/myNotebook";
+
 //Everything happens here
 MongoClient.connect(connectionURI, dbConnectCallback);
