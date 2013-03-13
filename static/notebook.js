@@ -19,7 +19,7 @@ function addNotebook(name, callback, err_callback) {
             } else {
                 if(err_callback !== undefined &&
                    typeof(err_callback) === "function")
-                    err_callback(data.status);
+                    err_callback(data.status, data);
             }
         }
     });
@@ -45,9 +45,6 @@ function getNotebookHeader(name, callback, err_callback) {
 	      }
     });
 }
-
-
-
 
 
 
@@ -163,10 +160,10 @@ function upDate(name, entryIndex, dateAccessed) {
 }
 
 // Remove an entry
-function removeEntry(name, entryIndex, callback) {
+function removeEntry(name, entryId, callback) {
     $.ajax({
         type: "post",
-        data: {"name": name, "entryIndex": entryIndex},
+        data: {"name": name, "entryIndex": entryId},
         url: "/removeEntry",
         success: function(data) {
 		        console.log(data.notebook);

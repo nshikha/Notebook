@@ -1,0 +1,8 @@
+{
+    "name": "myNotebook-237",
+    "dependencies": {
+        "express": "3.0.3",
+        "pg": "0.14.0",
+        "sequelize": "1.6.0-beta4"
+    }
+}

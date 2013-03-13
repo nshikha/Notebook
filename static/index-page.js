@@ -35,11 +35,12 @@ function createNotebook() {
         addNotebook(notebookName, function() {
             var origin = window.location.origin;
             window.location = origin+"/notebook/"+notebookName;
-        }, function(err_message) {
+        }, function(err_message, d) {
             var msg = "";
             if (err_message === "existing") {
                 msg = "This notebook already exists!";
             } else {
+                console.log(d);
                 msg = "This notebook name is invalid";
             }
             flash_message(info, "error", [msg]);

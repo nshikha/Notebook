@@ -520,7 +520,7 @@ app.post('/removeEntry', function (request, response) {
 				var entry = notebook.entries[index];
 				if(!entry.deleted){
 					entry.deleted = true;
-					
+
 					// Remove associated tags from access_database
 					deleteEntryTags(notebook, entry.index);
 
@@ -699,7 +699,7 @@ app.get('/search/:name/:tags', function (request, response) {
 
 			response.send({"results": entries, "success": true});
 		});
-	}
+p	}
 	else{
 		response.send({"success": false});
 	}
@@ -707,7 +707,7 @@ app.get('/search/:name/:tags', function (request, response) {
 
 
 
-//--------------------------------------------------------------------- 
+//---------------------------------------------------------------------
 //Finally, initialize the server, then activate the server at port 8889
 
 
